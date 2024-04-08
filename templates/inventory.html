@@ -9,8 +9,8 @@
     <table>
         <tr>
             <th>Name</th>
-            <th colspan="1">600</th>
-            <th colspan="1">1200</th>
+            <th colspan="1">600cc</th>
+            <th colspan="1">1200cc</th>
         </tr>
         {% for name, products in products_grouped.items() %}
         <tr>
@@ -19,7 +19,8 @@
             <!-- <td>Stock: {{ product.stock }}</td> -->
             <td>
                 <form action="{{ url_for('update_stock', id=product.id) }}" method="post">
-                    <input type="number" name="stock" value="{{ product.stock }}" min="0">
+                    <input type="hidden" name="last_refresh_stock" value="{{ product.stock }}">
+                    <input type="number" name="submitted_stock" value="{{ product.stock }}" min="0">
                     <input type="submit" value="Update">
                 </form>
             </td>
