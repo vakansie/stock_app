@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grow Kit Inventory</title>
+</head>
+<body>
+    <h2>Grow Kit Inventory</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th colspan="1">600</th>
+            <th colspan="1">1200</th>
+        </tr>
+        {% for name, products in products_grouped.items() %}
+        <tr>
+            <td>{{ name }}</td>
+            {% for product in products %}
+            <!-- <td>Stock: {{ product.stock }}</td> -->
+            <td>
+                <form action="{{ url_for('update_stock', id=product.id) }}" method="post">
+                    <input type="number" name="stock" value="{{ product.stock }}" min="0">
+                    <input type="submit" value="Update">
+                </form>
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
