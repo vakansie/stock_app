@@ -3,6 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>Grow Kit Inventory</title>
+    <script>
+        // JavaScript to handle submitting all forms at once
+        function updateAllStock() {
+            document.querySelectorAll('form').forEach(form => {
+                // Clone the form data into a new FormData object
+                const formData = new FormData(form);
+                // Fetch API to submit form data
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                }).then(response => {
+                    if (response.ok) {
+                        console.log('Stock updated successfully!');
+                        // Handle success (e.g., display a message or refresh)
+                    } else {
+                        console.error('Error updating stock');
+                        // Handle error
+                    }
+                });
+            });
+        }
+    </script>
 </head>
 <body>
     <h2>Grow Kit Inventory</h2>
@@ -16,17 +38,17 @@
         <tr>
             <td>{{ name }}</td>
             {% for product in products %}
-            <!-- <td>Stock: {{ product.stock }}</td> -->
             <td>
                 <form action="{{ url_for('update_stock', id=product.id) }}" method="post">
                     <input type="hidden" name="last_refresh_stock" value="{{ product.stock }}">
-                    <input type="number" name="submitted_stock" value="{{ product.stock }}" min="0">
-                    <input type="submit" value="Update">
+                    <input type="number" name="submitted_stock" value="{{ product.stock }}" min="0" tabindex="{{ loop.index }}">
+                    <input type="submit" value="Update" tabindex=-1>
                 </form>
             </td>
             {% endfor %}
         </tr>
         {% endfor %}
     </table>
+    <button onclick="updateAllStock()">Update All Stock</button>
 </body>
 </html>
