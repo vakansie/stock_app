@@ -43,7 +43,7 @@ def main():
     ip = '127.0.0.1'
     print(f'\nrunning on http://{ip}:8080/\n')
     webbrowser.open(f'http://{ip}:8080/', new=2)
-    serve(app, host="{ip}", port=8080)
+    serve(app, host=ip, port=8080)
 
 if __name__ == '__main__':
     main()
