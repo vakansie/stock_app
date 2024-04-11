@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, redirect
 import sqlite3
+import webbrowser
 
 app = Flask(__name__)
 
 def get_db_connection():
-    conn = sqlite3.connect('growkit_inventory.db')
+    conn = sqlite3.connect(r'growkit_inventory.db')
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -24,16 +25,25 @@ def inventory():
 
 @app.route('/update_stock/<int:id>', methods=['POST'])
 def update_stock(id):
+    # calculate the difference between what the user thinks the stock value is and what the user says it should be. This allows for concurrent editing.
     last_refresh_stock = int(request.form['last_refresh_stock'])
     submitted_stock = int(request.form['submitted_stock'])
-    # if not submitted_stock.isdecimal(): return
-    conn = get_db_connection()
-    # Calculate the difference based on the last refresh stock value
-    stock_difference = submitted_stock - last_refresh_stock    # Calculate the difference
+    stock_difference = submitted_stock - last_refresh_stock
+    if stock_difference == 0: return redirect('/')
     # Update the stock in the database using the difference
+    conn = get_db_connection()
     conn.execute('UPDATE growkits SET stock = stock + ? WHERE id = ?', (stock_difference, id))
     conn.commit()
     conn.close()
     return redirect('/')
 
-app.run(debug=True)
+def main():
+    from waitress import serve
+    # replace ip with your machines ipv4 to run on your local network
+    ip = '127.0.0.1'
+    print(f'\nrunning on http://{ip}:8080/\n')
+    webbrowser.open(f'http://{ip}:8080/', new=2)
+    serve(app, host="{ip}", port=8080)
+
+if __name__ == '__main__':
+    main()
