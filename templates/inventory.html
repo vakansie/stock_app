@@ -3,34 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <title>Grow Kit Inventory</title>
+    <style>
+        /* Alternating row background colors */
+        tr:nth-child(odd) {
+            background-color: #f0f0f0; /* Light grey for odd rows */
+        }
+        tr:nth-child(even) {
+            background-color: #ffffff; /* White for even rows */
+        }
+        input.zero-value {
+            background-color: #e0e0e0; /* Grey out inputs with value 0 */
+        }
+    </style>
     <script>
-        // JavaScript to handle submitting all forms at once
+        // JavaScript to handle submitting all forms at once and to grey out zero value inputs
         function updateAllStock() {
             document.querySelectorAll('form').forEach(form => {
-                // Clone the form data into a new FormData object
                 const formData = new FormData(form);
-                // Fetch API to submit form data
                 fetch(form.action, {
                     method: 'POST',
                     body: formData,
                 }).then(response => {
                     if (response.ok) {
                         console.log('Stock updated successfully!');
-                        // Handle success (e.g., display a message or refresh)
                     } else {
                         console.error('Error updating stock');
-                        // Handle error
                     }
                 });
+            });
+        }
+
+        window.onload = function() {
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                if (input.value === '0') {
+                    input.classList.add('zero-value');
+                }
+                // Add event listener to update class dynamically
+                input.addEventListener('change', function() {
+                    if (this.value === '0') {
+                        this.classList.add('zero-value');
+                    } else {
+                        this.classList.remove('zero-value');
+                    }
+                });
+
+                // Set title for tooltip
+                let name = input.closest('tr').querySelector('td').textContent; // Gets the name from the first column
+                let header = input.closest('table').querySelector('th:nth-child(' + (input.closest('td').cellIndex + 1) + ')').textContent;
+                input.title = name + ' - ' + header;
+            });
+        };
+        window.onload = function() {
+            setupInputTitles();
+            toggleEmptyRows();
+        };
+
+        function setupInputTitles() {
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                if (input.value === '0') {
+                    input.classList.add('zero-value');
+                }
+                input.addEventListener('change', function() {
+                    this.value === '0' ? this.classList.add('zero-value') : this.classList.remove('zero-value');
+                });
+                let name = input.closest('tr').querySelector('td').textContent;
+                let header = input.closest('table').querySelector('th:nth-child(' + (input.closest('td').cellIndex + 1) + ')').textContent;
+                input.title = name + ' - ' + header;
+            });
+        }
+
+        function toggleEmptyRows() {
+            const tables = document.querySelectorAll('table');
+            tables.forEach(table => {
+                // Ensure only non-header rows are toggled
+                table.querySelectorAll('tr').forEach(row => {
+                    if (row !== table.rows[0]) { // Skip the header row
+                        const inputs = row.querySelectorAll('input[type="number"]');
+                        const allEmpty = Array.from(inputs).every(input => input.value === '0');
+                        row.style.display = row.style.display === 'none' ? '' : (allEmpty ? 'none' : '');
+                    }
+                });
+            });
+        }
+
+        function toggleEmptyColumns() {
+            const tables = document.querySelectorAll('table');
+            tables.forEach(table => {
+                const numCols = table.querySelectorAll('th').length;
+                for (let i = 2; i <= numCols; i++) { // Start from 2 to skip the name column
+                    const inputs = table.querySelectorAll('td:nth-child(' + i + ') input[type="number"]');
+                    const allEmpty = Array.from(inputs).every(input => input.value === '0');
+                    const colVisibility = allEmpty ? 'none' : '';
+
+                    // Only toggle td elements, keep th always visible
+                    table.querySelectorAll('td:nth-child(' + i + ')').forEach(cell => {
+                        cell.style.display = cell.style.display === 'none' ? '' : colVisibility;
+                    });
+                }
             });
         }
     </script>
 </head>
 <body>
-    <h2>Grow Kit Inventory</h2>
+    <h2>Grow Kits</h2>
     <table>
         <tr>
-            <th>Name</th>
+            <th class="name-column">Strain</th>
             <th colspan="1">600cc</th>
             <th colspan="1">1200cc</th>
         </tr>
@@ -39,9 +117,9 @@
             <td>{{ name }}</td>
             {% for product in products %}
             <td>
-                <form action="{{ url_for('update_stock', id=product.id) }}" method="post">
+                <form action="{{ url_for('update_stock', table='growkits', id=product.id) }}" method="post">
                     <input type="hidden" name="last_refresh_stock" value="{{ product.stock }}">
-                    <input type="number" name="submitted_stock" value="{{ product.stock }}" min="0" tabindex="{{ loop.index }}">
+                    <input type="number" name="submitted_stock" value="{{ product.stock }}" min="0" tabindex="{{ loop.index }}" title="">
                     <input type="submit" value="Update" tabindex=-1>
                 </form>
             </td>
@@ -49,6 +127,33 @@
         </tr>
         {% endfor %}
     </table>
-    <button onclick="updateAllStock()">Update All Stock</button>
+    <h2>Spores</h2>
+    <table>
+        <tr>
+            <th>Strain</th>
+            <th>Prints</th>
+            <th>Syringes</th>
+            <th>Vials</th>
+        </tr>
+        {% for name, spores in spores_grouped.items() %}
+        <tr>
+            <td>{{ name }}</td>
+            {% for spore in spores %}
+            <td>
+                <form action="{{ url_for('update_stock', table='spores', id=spore.id) }}" method="post">
+                    <input type="hidden" name="last_refresh_stock" value="{{ spore.stock }}">
+                    <input type="number" name="submitted_stock" value="{{ spore.stock }}" min="0" tabindex="{{ loop.index }}" title="">
+                    <input type="submit" value="Update" tabindex=-1>
+                </form>
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="btn-group">
+        <button onclick="updateAllStock()">Update All Stock</button>
+        <button onclick="toggleEmptyRows()">Toggle No Stock Products</button>
+        <!-- <button onclick="toggleEmptyColumns()">Toggle Empty Columns</button> -->
+    </div>
 </body>
 </html>
