@@ -15,7 +15,7 @@
             background-color: #e0e0e0; /* Grey out inputs with value 0 */
         }
         table {
-            width: 100%;
+            /* width: 100%; */
             border-collapse: collapse; /* Optional: for better border handling */
         }
 
@@ -26,20 +26,18 @@
             top: 0;
             z-index: 10; /* Ensures the header is above other content when scrolling */
         }
-        input { 
-            text-align: right; 
-        }
         /* td {
             text-align:right
         } */
-        /* input[type='number']{
+        input[type='number']{
             width: 80px;
-        } */
+            text-align: right; 
+        }
     </style>
     <script src="static/stock_app.js"></script>
 </head>
 <body>
-    <h2>Fastbuds</h2>
+    <h2>Fastbuds Inventory</h2>
     <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search...">
     <table id="Seed Inventory">
         <tr>
