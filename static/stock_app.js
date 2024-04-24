@@ -1,20 +1,14 @@
-
-// JavaScript to handle submitting all forms at once and to grey out zero value inputs
-function updateAllStock() {
-    document.querySelectorAll('form').forEach(form => {
-        const formData = new FormData(form);
-        fetch(form.action, {
-            method: 'POST',
-            body: formData,
-        }).then(response => {
-            if (response.ok) {
-                console.log('Stock updated successfully!');
-            } else {
-                console.error('Error updating stock');
-            }
-        });
-    });
+window.addEventListener('load', initialize);
+function getColumnIndex(table, headerName) {
+    let headers = table.querySelectorAll('th');
+    return Array.from(headers).findIndex(header => header.textContent.trim() === headerName);
 }
+document.addEventListener("DOMContentLoaded", function() {
+    // Check if a specific string is in the document's title
+    if (document.title.includes("Grow Kit")) {
+        toggleEmptyRows();
+    }
+});
 function initialize() {
     document.querySelectorAll('input[type="number"]').forEach(input => {
         if (input.value === '0') {
@@ -25,17 +19,6 @@ function initialize() {
         });
     });
     setupInputTitles();
-    document.addEventListener("DOMContentLoaded", function() {
-        // Check if a specific string is in the document's title
-        if (document.title.includes("Grow Kit")) {
-            toggleEmptyRows();
-        }
-    });
-}
-window.addEventListener('load', initialize);
-function getColumnIndex(table, headerName) {
-    let headers = table.querySelectorAll('th');
-    return Array.from(headers).findIndex(header => header.textContent.trim() === headerName);
 }
 function setupInputTitles() {
     document.querySelectorAll('input[type="number"]').forEach(input => {
@@ -52,6 +35,22 @@ function setupInputTitles() {
         let number = numberTd ? numberTd.textContent.trim() : null;
         let header = input.closest('table').querySelector('th:nth-child(' + (input.closest('td').cellIndex + 1) + ')').textContent;
         input.title = number ? `${number} - ${name} - ${header}` : `${name} - ${header}`;
+    });
+}
+// JavaScript to handle submitting all forms at once and to grey out zero value inputs
+function updateAllStock() {
+    document.querySelectorAll('form').forEach(form => {
+        const formData = new FormData(form);
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+        }).then(response => {
+            if (response.ok) {
+                console.log('Stock updated successfully!');
+            } else {
+                console.error('Error updating stock');
+            }
+        });
     });
 }
 function toggleEmptyRows() {
