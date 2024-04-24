@@ -3,26 +3,61 @@ import sqlite3
 import webbrowser
 import socket
 
-ALLOWED_TABLES = {'growkits', 'spores'}
+ALLOWED_TABLES = {'growkits', 'spores', 'cannabis_seeds'}
+seeds_grouped = {}
+growkits_grouped = {}
+spores_grouped = {}
 
 app = Flask(__name__)
 
 def get_db_connection():
-    conn = sqlite3.connect(r'growkit_inventory.db')
+    conn = sqlite3.connect(r'product_inventory.db')
     conn.row_factory = sqlite3.Row
     return conn
 
 @app.route('/')
 def inventory():
+    global growkits_grouped
+    global spores_grouped
+    if not growkits_grouped or not spores_grouped:
+        growkits_grouped, spores_grouped = get_mushrooms_grouped()
+    return render_template('inventory.html', products_grouped=growkits_grouped, spores_grouped=spores_grouped)
+
+@app.route('/fastbuds')
+def fastbuds():
+    global seeds_grouped
+    if not seeds_grouped:
+        seeds_grouped = get_seeds_grouped()
+    return render_template('fastbuds.html', seeds_grouped=seeds_grouped)
+
+def get_seeds_grouped():
+    conn = get_db_connection()
+    cursor = conn.execute("""
+        SELECT name, pack_size, stock, retail_price, id, storage_location_number
+        FROM cannabis_seeds 
+        WHERE manufacturer='Fastbuds'
+        ORDER BY storage_location_number, name, pack_size
+    """)
+    seeds = cursor.fetchall()
+    grouped = {}
+    for seed in seeds:
+        key = (seed['storage_location_number'], seed['name'])
+        if key not in grouped:
+            grouped[key] = []
+        grouped[key].append(seed)
+    conn.close()
+    return grouped
+
+def get_mushrooms_grouped():
     conn = get_db_connection()
     # Fetching growkits
     products_raw = conn.execute('SELECT * FROM growkits ORDER BY name, size').fetchall()
-    products_grouped = {}
+    growkits_grouped = {}
     for product in products_raw:
-        if product['name'] in products_grouped:
-            products_grouped[product['name']].append(product)
+        if product['name'] in growkits_grouped:
+            growkits_grouped[product['name']].append(product)
         else:
-            products_grouped[product['name']] = [product]
+            growkits_grouped[product['name']] = [product]
     # Fetching spores
     spores_raw = conn.execute('SELECT * FROM spores ORDER BY name, form').fetchall()
     spores_grouped = {}
@@ -32,7 +67,7 @@ def inventory():
         else:
             spores_grouped[spore['name']] = [spore]
     conn.close()
-    return render_template('inventory.html', products_grouped=products_grouped, spores_grouped=spores_grouped)
+    return growkits_grouped, spores_grouped
 
 @app.route('/update_stock/<table>/<int:id>', methods=["POST"])
 def update_stock(table, id):
@@ -47,15 +82,17 @@ def update_stock(table, id):
     conn.execute(query, (stock_difference, id))
     conn.commit()
     conn.close()
-    return redirect('/')
+    manufacturer_route = request.form.get('manufacturer_route', '')
+    return redirect(f'/{manufacturer_route}')
 
 def main():
-    from waitress import serve
-    hostname = socket.gethostname()
-    ipv4_address = socket.gethostbyname(hostname)
-    print(f'\nrunning on http://{ipv4_address}:8080/\n')
-    webbrowser.open(f'http://{ipv4_address}:8080/', new=2)
-    serve(app, host=f'{ipv4_address}', port=8080)
+    # from waitress import serve
+    # hostname = socket.gethostname()
+    # ipv4_address = socket.gethostbyname(hostname)
+    # print(f'\nrunning on http://{ipv4_address}:8080/\n')
+    # webbrowser.open(f'http://{ipv4_address}:8080/', new=2)
+    # serve(app, host=f'{ipv4_address}', port=8080)
+    app.run(debug=True)
 
 if __name__ == '__main__':
     main()

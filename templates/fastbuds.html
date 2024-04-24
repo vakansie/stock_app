@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fastbuds Seeds</title>
+    <style>
+        /* Alternating row background colors */
+        tr:nth-child(odd) {
+            background-color: #f0f0f0; /* Light grey for odd rows */
+        }
+        tr:nth-child(even) {
+            background-color: #ffffff; /* White for even rows */
+        }
+        input.zero-value {
+            background-color: #e0e0e0; /* Grey out inputs with value 0 */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse; /* Optional: for better border handling */
+        }
+
+        th {
+            background-color: #f9f9f9; /* Gives a background color to the header */
+            color: black;
+            position: sticky;
+            top: 0;
+            z-index: 10; /* Ensures the header is above other content when scrolling */
+        }
+        input { 
+            text-align: right; 
+        }
+        /* td {
+            text-align:right
+        } */
+        /* input[type='number']{
+            width: 80px;
+        } */
+    </style>
+    <script src="static/stock_app.js"></script>
+</head>
+<body>
+    <h2>Fastbuds</h2>
+    <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search...">
+    <table id="Seed Inventory">
+        <tr>
+            <th>Number</th>
+            <th>Name</th>
+            <th>1-Packs</th>
+            <th>Price</th>
+            <th>3-Packs</th>
+            <th>Price</th>
+            <th>5-Packs</th>
+            <th>Price</th>
+            <th>10-Packs</th>
+            <th>Price</th>
+            <th>25-Packs</th>
+            <th>Price</th>
+        </tr>
+        {% for (location_number, name), seeds in seeds_grouped.items() %}
+        <tr>
+            <td>{{ location_number }}</td>
+            <td>{{ name }}</td>
+            {% for seed in seeds %}
+            <td>
+                <form action="{{ url_for('update_stock', table='cannabis_seeds', id=seed['id']) }}" method="post">
+                    <input type="hidden" name="last_refresh_stock" value="{{ seed['stock'] }}">
+                    <input type="hidden" name="manufacturer_route" value="fastbuds">
+                    <input type="number" name="submitted_stock" value="{{ seed['stock'] }}" min="0">
+                    <input type="submit" value="Update" tabindex=-1>
+                </form>
+            </td>
+            <td>€{{ seed['retail_price'] }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="btn-group">
+        <button onclick="updateAllStock()">Update All Stock</button>
+        <button onclick="toggleEmptyRows()">Toggle No Stock Products</button>
+        <!-- <button onclick="toggleEmptyColumns()">Toggle Empty Columns</button> -->
+    </div>
+</body>
+</html>

@@ -14,101 +14,17 @@
         input.zero-value {
             background-color: #e0e0e0; /* Grey out inputs with value 0 */
         }
+        input { 
+            text-align: right; 
+        }
     </style>
-    <script>
-        // JavaScript to handle submitting all forms at once and to grey out zero value inputs
-        function updateAllStock() {
-            document.querySelectorAll('form').forEach(form => {
-                const formData = new FormData(form);
-                fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                }).then(response => {
-                    if (response.ok) {
-                        console.log('Stock updated successfully!');
-                    } else {
-                        console.error('Error updating stock');
-                    }
-                });
-            });
-        }
-
-        window.onload = function() {
-            document.querySelectorAll('input[type="number"]').forEach(input => {
-                if (input.value === '0') {
-                    input.classList.add('zero-value');
-                }
-                // Add event listener to update class dynamically
-                input.addEventListener('change', function() {
-                    if (this.value === '0') {
-                        this.classList.add('zero-value');
-                    } else {
-                        this.classList.remove('zero-value');
-                    }
-                });
-
-                // Set title for tooltip
-                let name = input.closest('tr').querySelector('td').textContent; // Gets the name from the first column
-                let header = input.closest('table').querySelector('th:nth-child(' + (input.closest('td').cellIndex + 1) + ')').textContent;
-                input.title = name + ' - ' + header;
-            });
-        };
-        window.onload = function() {
-            setupInputTitles();
-            toggleEmptyRows();
-        };
-
-        function setupInputTitles() {
-            document.querySelectorAll('input[type="number"]').forEach(input => {
-                if (input.value === '0') {
-                    input.classList.add('zero-value');
-                }
-                input.addEventListener('change', function() {
-                    this.value === '0' ? this.classList.add('zero-value') : this.classList.remove('zero-value');
-                });
-                let name = input.closest('tr').querySelector('td').textContent;
-                let header = input.closest('table').querySelector('th:nth-child(' + (input.closest('td').cellIndex + 1) + ')').textContent;
-                input.title = name + ' - ' + header;
-            });
-        }
-
-        function toggleEmptyRows() {
-            const tables = document.querySelectorAll('table');
-            tables.forEach(table => {
-                // Ensure only non-header rows are toggled
-                table.querySelectorAll('tr').forEach(row => {
-                    if (row !== table.rows[0]) { // Skip the header row
-                        const inputs = row.querySelectorAll('input[type="number"]');
-                        const allEmpty = Array.from(inputs).every(input => input.value === '0');
-                        row.style.display = row.style.display === 'none' ? '' : (allEmpty ? 'none' : '');
-                    }
-                });
-            });
-        }
-
-        function toggleEmptyColumns() {
-            const tables = document.querySelectorAll('table');
-            tables.forEach(table => {
-                const numCols = table.querySelectorAll('th').length;
-                for (let i = 2; i <= numCols; i++) { // Start from 2 to skip the name column
-                    const inputs = table.querySelectorAll('td:nth-child(' + i + ') input[type="number"]');
-                    const allEmpty = Array.from(inputs).every(input => input.value === '0');
-                    const colVisibility = allEmpty ? 'none' : '';
-
-                    // Only toggle td elements, keep th always visible
-                    table.querySelectorAll('td:nth-child(' + i + ')').forEach(cell => {
-                        cell.style.display = cell.style.display === 'none' ? '' : colVisibility;
-                    });
-                }
-            });
-        }
-    </script>
+    <script src="static/stock_app.js"></script>
 </head>
 <body>
     <h2>Grow Kits</h2>
     <table>
         <tr>
-            <th class="name-column">Strain</th>
+            <th class="name-column">Name</th>
             <th colspan="1">600cc</th>
             <th colspan="1">1200cc</th>
         </tr>
@@ -130,7 +46,7 @@
     <h2>Spores</h2>
     <table>
         <tr>
-            <th>Strain</th>
+            <th>Name</th>
             <th>Prints</th>
             <th>Syringes</th>
             <th>Vials</th>
