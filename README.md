@@ -1,6 +1,6 @@
 # stock_app
 
-an in browser stock list for your stores local network
+a web based stock list for your stores local network
 
 uses a sqlite3 databse to store the products and their stock
 
