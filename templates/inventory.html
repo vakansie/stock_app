@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="static/styles.css">
     <meta charset="UTF-8">
     <title>Grow Kit Inventory</title>
     <style>
         /* Alternating row background colors */
-        tr:nth-child(odd) {
-            background-color: #f0f0f0; /* Light grey for odd rows */
+        /* tr:nth-child(odd) {
+            background-color: #f0f0f0;
         }
         tr:nth-child(even) {
-            background-color: #ffffff; /* White for even rows */
+            background-color: #ffffff;
         }
         input.zero-value {
-            background-color: #e0e0e0; /* Grey out inputs with value 0 */
-        }
+            background-color: #e0e0e0;
+        } */
         input { 
             text-align: right; 
         }
@@ -21,6 +22,14 @@
     <script src="static/stock_app.js"></script>
 </head>
 <body>
+    <div class="nav-menu">
+        <a href="{{ url_for('fastbuds') }}">Fastbuds</a>
+        <a href="{{ url_for('green_house') }}">Green House Seeds</a>
+        <a href="{{ url_for('barney') }}">Barneys Farm</a>
+        <a href="{{ url_for('dutch_passion') }}">Dutch Passion</a>
+        <a href="{{ url_for('rqs') }}">Royal Queen Seeds</a>
+        <a href="{{ url_for('inventory') }}">Grow Kit Stock List</a>
+    </div>
     <h2>Grow Kits</h2>
     <table>
         <tr>
@@ -68,7 +77,7 @@
     </table>
     <div class="btn-group">
         <button onclick="updateAllStock()">Update All Stock</button>
-        <button onclick="toggleEmptyRows()">Toggle No Stock Products</button>
+        <button onclick="handleToggleClick()">Toggle No Stock Products</button>
         <!-- <button onclick="toggleEmptyColumns()">Toggle Empty Columns</button> -->
     </div>
 </body>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add New Product</title>
+</head>
+<body>
+    <h1>Add New Product</h1>
+    <form action="{{ url_for('add_product', table=table) }}" method="post">
+        {% for field in fields %}
+        <div>
+            <label for="{{ field }}">{{ field.capitalize() }}:</label>
+            <input type="text" id="{{ field }}" name="{{ field }}" required>
+
+        </div>
+        {% endfor %}
+        <input type="submit" value="Add Product">
+    </form>
+</body>
+</html>
