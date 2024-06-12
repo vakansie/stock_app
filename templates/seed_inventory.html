@@ -8,14 +8,16 @@
     <title>{{  page_title  }}</title>
     <style>
         input[type='number']{
-            width: 80px;
+            width: 60px;
             text-align: right; 
         }
-        /* Navigation menu styles */
     </style>
-    <script src="static/stock_app.js"></script>
+    <script src="static/stock_app.js" defer></script>
 </head>
 <body>
+    <form method="post" id="refreshForm" action="{{ url_for('refresh_page') }}" style="display: none;">
+        <input type="hidden" name="refresh" value="true">
+    </form>
     <!-- Navigation Menu -->
     <div class="nav-menu">
         <a href="{{ url_for('fastbuds') }}">Fastbuds</a>
@@ -23,52 +25,63 @@
         <a href="{{ url_for('barney') }}">Barneys Farm</a>
         <a href="{{ url_for('dutch_passion') }}">Dutch Passion</a>
         <a href="{{ url_for('rqs') }}">Royal Queen Seeds</a>
+        <a href="{{ url_for('all_seeds') }}">All Seeds Inventory</a>
         <a href="{{ url_for('inventory') }}">Grow Kit Stock List</a>
+        <button id="toggle-theme">Toggle Theme</button>
     </div>
-    <h2>{{  page_header  }}</h2>
-    <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search...">
+    <h2>{{ page_header }}</h2>
+    <div class="search-container">
+        <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search...">
+        <button class="clear-btn" onclick="clearSearch()">Clear Search</button>
+        <button class="clear-btn" onclick="updateAllStock()">Update All Stock</button>
+        <button id="toggle-button" class="clear-btn" onclick="toggleEmptyRows()">Toggle No Stock Products</button>
+        {% if show_toggle %}
+            <a href="{{ url_for('green_house_all' if route == 'ghs/all' else 'green_house') }}" class="clear-btn">{{ 'Table per Type' if route == 'ghs' else 'Single Table' }}</a>
+        {% endif %}
+    </div>
     {% for seed_type, seeds_by_type in seeds_grouped.items() %}
         <h3>{{ seed_type }}</h3>
-        <table id="{{ seed_type }}_inventory">
-            <tr>
-                <th>Number</th>
-                <th>Name</th>
-                {% for pack_size in pack_sizes[seed_type]|sort %}
-                    <th>{{ pack_size }}-Packs</th>
-                    <th>Price</th>
-                {% endfor %}
-            </tr>
-            {% for (location_number, name), seeds in seeds_by_type.items() %}
-                <tr>
-                    <td>{{ location_number }}</td>
-                    <td>{{ name }}</td>
-                    {% for pack_size in pack_sizes[seed_type]|sort %}
-                        {% set seed_found = seeds | selectattr('pack_size', 'equalto', pack_size) | list %}
-                        {% if seed_found %}
-                            <td>
-                                <form action="{{ url_for('update_stock', table='cannabis_seeds', id=seed_found[0]['id']) }}" method="post">
-                                    <input type="hidden" name="last_refresh_stock" value="{{ seed_found[0]['stock'] }}">
-                                    <input type="hidden" name="manufacturer" value="{{ seed_found[0]['manufacturer'] }}">
-                                    <input type="number" name="submitted_stock" value="{{ seed_found[0]['stock'] }}" min="0"> 
-                                    <!-- tabindex="{{ loop.index }}" -->
-                                    <input type="submit" value="Update" tabindex=-1>
-                                </form>
-                            </td>
-                            <td>€{{ seed_found[0]['retail_price'] }}</td>
-                        {% else %}
-                            <td></td>
-                            <td></td>
-                        {% endif %}
+        <div class="table-container">
+            <table id="{{ seed_type }}_inventory">
+                <thead>
+                    <tr>
+                        <th>Number</th>
+                        <th>Name</th>
+                        {% for pack_size in pack_sizes[seed_type]|sort %}
+                            <th>{{ pack_size }}-Packs</th>
+                            <th>Price</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for (location_number, name), seeds in seeds_by_type.items() %}
+                        {% set seed_type_class = seed_type | lower | replace(' ', '-') %}
+                        <tr class="{{  seed_type_class  }}">
+                            <td data-label="Number">{{ location_number }}</td>
+                            <td data-label="Name">{{ name }}</td>
+                            {% for pack_size in pack_sizes[seed_type]|sort %}
+                                {% set seed_found = seeds | selectattr('pack_size', 'equalto', pack_size) | list %}
+                                {% if seed_found %}
+                                    <td data-label="{{ pack_size }}-Packs">
+                                        <form class="stock_input" action="{{ url_for('update_stock', table='cannabis_seeds', id=seed_found[0]['id']) }}" method="post">
+                                            <input type="hidden" name="last_refresh_stock" value="{{ seed_found[0]['stock'] }}">
+                                            <input type="hidden" name="manufacturer" value="{{ seed_found[0]['manufacturer'] }}">
+                                            <input type="number" name="submitted_stock" value="{{ seed_found[0]['stock'] }}" min="0">
+                                            <input type="submit" value="Update" tabindex="-1">
+                                        </form>
+                                    </td>
+                                    <td data-label="Price">€{{ seed_found[0]['retail_price'] }}</td>
+                                {% else %}
+                                    <td data-label="{{ pack_size }}-Packs"></td>
+                                    <td data-label="Price"></td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
                     {% endfor %}
-                </tr>
-            {% endfor %}
-        </table>
+                </tbody>
+            </table>
+        </div>
         <br></br>
     {% endfor %}
-    <div class="btn-group">
-        <button onclick="updateAllStock()">Update All Stock</button>
-        <button onclick="toggleEmptyRows()">Toggle No Stock Products</button>
-        <button onclick="replaceButtons('cannabis_seeds')">Edit</button>
-    </div>
 </body>
 </html>

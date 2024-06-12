@@ -1,6 +1,33 @@
+:root {
+    --bg-dark: #1b1b1b;
+    --text-light: #c8c8c8;
+    --link-dark-bg: #242424;
+    --link-dark-border: #343434;
+    --link-hover-bg: #575757;
+    --table-header-bg: #333333;
+    --table-header-text: #ffffff;
+    --row-odd-bg: #2b2b2b;
+    --row-even-bg: #1f1f1f;
+    --input-bg: #444444;
+    --input-border-radius: 5px;
+    --input-focus-bg: #777777;
+    --placeholder-text: rgb(255, 255, 255);
+    --light-bg: rgb(255, 255, 255);
+    --light-text: rgb(0, 0, 0);
+    --light-link-bg: #f0f0f0;
+    --light-link-border: #d0d0d0;
+    --light-link-hover-bg: #cccccc;
+    --light-table-header-bg: #e0e0e0;
+    --light-row-odd-bg: #f9f9f9;
+    --light-row-even-bg: #ffffff;
+    --light-input-bg: #dddddd;
+    --light-placeholder-text: rgb(0, 0, 0);
+}
+
+/* Dark mode styles */
 body {
-    background-color: rgb(0, 0, 0);
-    color: rgb(200, 200, 200); /* Light grey text for better readability */
+    background-color: var(--bg-dark);
+    color: var(--text-light);
 }
 .nav-menu {
     margin-bottom: 20px;
@@ -10,53 +37,182 @@ body {
 .nav-menu a {
     text-decoration: none;
     padding: 10px;
-    background-color: #242424; /* Darker background for links */
-    border: 1px solid #343434; /* Slightly lighter border for contrast */
-    color: rgb(255, 255, 255); /* White text */
+    background-color: var(--link-dark-bg);
+    border: 1px solid var(--link-dark-border);
+    color: #ffffff;
 }
 .nav-menu a:hover {
-    background-color: #575757; /* Medium grey for hover */
-    color: #ffffff; /* Ensure text is still white on hover */
+    background-color: var(--link-hover-bg);
+    color: #ffffff;
 }
+
 /* Table styles */
 table {
     border-collapse: collapse;
 }
 th {
-    background-color: #333333; /* Dark background for headers */
-    color: #ffffff; /* White text for headers */
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text);
     position: sticky;
     top: 0;
-    z-index: 10; /* Ensures the header is above other content when scrolling */
+    z-index: 10;
 }
 tr:nth-child(odd) {
-    background-color: #2b2b2b; /* Dark grey for odd rows */
+    background-color: var(--row-odd-bg);
 }
 tr:nth-child(even) {
-    background-color: #1f1f1f; /* Even darker grey for even rows */
+    background-color: var(--row-even-bg);
 }
+
 /* Input styles */
-input, button {
-    background-color: #444444; /* Dark background for inputs and buttons */
-    border-radius: 5px; /* Slightly rounded corners for aesthetics */
-    color: #ffffff; /* White text */
+input, button, a.clear-btn {
+    background-color: var(--input-bg);
+    border-radius: var(--input-border-radius);
+    color: #ffffff;
 }
-input[type="text"], input[type="number"] {
-    background-color: #333; /* Slightly different background for text inputs */
+input[type="text"], input[type="number"], input[type="submit"] {
+    background-color: var(--table-header-bg);
+    height: 30px;
 }
 input.zero-value {
-    background-color: #0b0b0b; /* Dark grey to maintain the theme */
-    color: #cccccc; /* Lighter text color for visibility */
+    background-color: #161616;
+    color: #cccccc;
 }
-input:focus, input:hover, button:focus, button:hover {
-    background-color: #777777; /* Medium grey for focus/hover */
-    outline: none; /* Remove the default focus outline */
-    color: #ffffff; /* Ensure text is still white on focus/hover */
+input:focus, input:hover, button:focus, button:hover, a.clear-btn:hover {
+    background-color: var(--input-focus-bg);
+    outline: none;
+    color: #ffffff;
 }
-button {
+button, a.clear-btn {
     cursor: pointer;
+    text-decoration: none; /* Ensure links don't have underlines */
+    display: inline-block; /* Ensure links have proper padding and margins */
+    padding: 10px; /* Same padding as the buttons */
 }
 ::placeholder {
-    color: rgb(255, 255, 255);
-    opacity: 1; /* Ensure placeholders are fully visible */
+    color: var(--placeholder-text);
+    opacity: 1;
+}
+
+/* Light mode styles */
+.light-mode {
+    background-color: var(--light-bg);
+    color: var(--light-text);
+}
+
+.light-mode .nav-menu a {
+    background-color: var(--light-link-bg);
+    border: 1px solid var(--light-link-border);
+    color: var(--light-text);
+}
+
+.light-mode .nav-menu a:hover {
+    background-color: var(--light-link-hover-bg);
+    color: var(--light-text);
+}
+
+.light-mode th {
+    background-color: var(--light-table-header-bg);
+    color: var(--light-text);
+}
+
+.light-mode tr:nth-child(odd) {
+    background-color: var(--light-row-odd-bg);
+}
+
+.light-mode tr:nth-child(even) {
+    background-color: var(--light-row-even-bg);
+}
+
+.light-mode input, .light-mode button, .light-mode a.clear-btn {
+    background-color: var(--light-input-bg);
+    color: var(--light-text);
+}
+
+.light-mode input[type="text"], .light-mode input[type="number"] {
+    background-color: #eeeeee;
+}
+
+.light-mode input.zero-value {
+    background-color: #797979;
+    color: var(--light-text);
+}
+
+.light-mode input:focus, .light-mode input:hover, .light-mode button:focus, .light-mode button:hover, .light-mode a.clear-btn:hover {
+    background-color: #bbbbbb;
+    color: var(--light-text);
+}
+
+.light-mode ::placeholder {
+    color: var(--light-placeholder-text);
+    opacity: 1;
+}
+
+/* Basic table styles */
+table {
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+/* Responsive table styles */
+@media (max-width: 600px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    thead tr {
+        display: none;
+    }
+
+    tr {
+        margin-bottom: 10px;
+    }
+
+    td {
+        border: none;
+        border-bottom: 1px solid #ddd;
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+    }
+
+    td:before {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        width: calc(50% - 12px);
+        white-space: nowrap;
+        content: attr(data-label);
+        text-align: left;
+        font-weight: bold;
+    }
+
+    td:last-child {
+        border-bottom: 0;
+    }
+}
+
+/* Add overflow handling */
+.table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+#searchInput {
+    height: 40px;
+    width: 400px;
+    font-size: 16px;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+}
+
+.clear-btn {
+    margin-left: 30px;
+    height: 40px;
+    font-size: 16px;
+    padding: 0 10px;
+    cursor: pointer;
 }

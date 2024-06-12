@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Product Inventory">
+    <title>{{ page_title }}</title>
+    <style>
+        input[type='number']{
+            width: 60px;
+            text-align: right; 
+        }
+    </style>
+    <script src="{{ url_for('static', filename='stock_app.js') }}" defer></script>
+</head>
+<body>
+    <form method="post" id="refreshForm" action="{{ url_for('refresh_page') }}" style="display: none;">
+        <input type="hidden" name="refresh" value="true">
+    </form>
+    <div class="nav-menu">
+        <a href="{{ url_for('fastbuds') }}">Fastbuds</a>
+        <a href="{{ url_for('green_house') }}">Green House Seeds</a>
+        <a href="{{ url_for('barney') }}">Barneys Farm</a>
+        <a href="{{ url_for('dutch_passion') }}">Dutch Passion</a>
+        <a href="{{ url_for('rqs') }}">Royal Queen Seeds</a>
+        <a href="{{ url_for('all_seeds') }}">All Seeds Inventory</a>
+        <a href="{{ url_for('inventory') }}">Grow Kit Stock List</a>
+        <button id="toggle-theme">Toggle Theme</button>
+    </div>
+    <h2>{{ page_header }}</h2>
+    <div class="search-container">
+        <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search...">
+        <button class="clear-btn" onclick="clearSearch()">Clear Search</button>
+        <button class="clear-btn" onclick="updateAllStock()">Update All Stock</button>
+        <button id="toggle-button" class="clear-btn" onclick="toggleEmptyRows()">Toggle No Stock Products</button>
+        {% if show_toggle %}
+            <a href="{{ url_for('green_house_all' if route == 'ghs/all' else 'green_house') }}" class="clear-btn">{{ 'Table per Type' if route == 'ghs' else 'Single Table' }}</a>
+        {% endif %}
+    </div>
+    <div class="table-container">
+        <table id="all_seeds_inventory">
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    {% for pack_size in pack_sizes %}
+                        <th>{{ pack_size }}-Packs</th>
+                        <th>Price</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for name, seeds_by_pack in seeds_grouped.items() %}
+                    {% set first_seed = seeds_by_pack.values() | first | first %}
+                    <tr>
+                        <td data-label="Number">{{ first_seed.storage_location_number }}</td>
+                        <td data-label="Name">{{ name }}</td>
+                        <td data-label="Type">{{ first_seed.seed_type }}</td>
+                        {% for pack_size in pack_sizes %}
+                            {% set seed_found = seeds_by_pack.get(pack_size, []) %}
+                            {% if seed_found %}
+                                <td data-label="{{ pack_size }}-Packs">
+                                    <form class="stock_input" action="{{ url_for('update_stock', table='cannabis_seeds', id=seed_found[0].id) }}" method="post">
+                                        <input type="hidden" name="last_refresh_stock" value="{{ seed_found[0].stock }}">
+                                        <input type="hidden" name="manufacturer" value="{{ seed_found[0].manufacturer }}">
+                                        <input type="number" name="submitted_stock" value="{{ seed_found[0].stock }}" min="0">
+                                        <input type="submit" value="Update" tabindex="-1">
+                                    </form>
+                                </td>
+                                <td data-label="Price">€{{ seed_found[0].retail_price }}</td>
+                            {% else %}
+                                <td data-label="{{ pack_size }}-Packs"></td>
+                                <td data-label="Price"></td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

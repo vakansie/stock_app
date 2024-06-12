@@ -5,80 +5,99 @@
     <meta charset="UTF-8">
     <title>Grow Kit Inventory</title>
     <style>
-        /* Alternating row background colors */
-        /* tr:nth-child(odd) {
-            background-color: #f0f0f0;
-        }
-        tr:nth-child(even) {
-            background-color: #ffffff;
-        }
-        input.zero-value {
-            background-color: #e0e0e0;
-        } */
         input { 
             text-align: right; 
         }
+        #proposed-order {
+            margin-top: 20px;
+        }
+        .container {
+            display: flex;
+        }
+        .container .inventory {
+            flex: 1;
+        }
+        .container .order-summary {
+            flex: 1;
+            margin-left: 20px;
+        }
     </style>
-    <script src="static/stock_app.js"></script>
+    <script src="static/stock_app.js" defer></script>
 </head>
 <body>
+    <form method="post" id="refreshForm" action="{{ url_for('refresh_page') }}" style="display: none;">
+        <input type="hidden" name="refresh" value="true">
+    </form>
     <div class="nav-menu">
         <a href="{{ url_for('fastbuds') }}">Fastbuds</a>
         <a href="{{ url_for('green_house') }}">Green House Seeds</a>
         <a href="{{ url_for('barney') }}">Barneys Farm</a>
         <a href="{{ url_for('dutch_passion') }}">Dutch Passion</a>
         <a href="{{ url_for('rqs') }}">Royal Queen Seeds</a>
+        <a href="{{ url_for('all_seeds') }}">All Seeds Inventory</a>
         <a href="{{ url_for('inventory') }}">Grow Kit Stock List</a>
+        <button id="toggle-theme">Toggle Theme</button>
     </div>
-    <h2>Grow Kits</h2>
-    <table>
-        <tr>
-            <th class="name-column">Name</th>
-            <th colspan="1">600cc</th>
-            <th colspan="1">1200cc</th>
-        </tr>
-        {% for name, products in products_grouped.items() %}
-        <tr>
-            <td>{{ name }}</td>
-            {% for product in products %}
-            <td>
-                <form action="{{ url_for('update_stock', table='growkits', id=product.id) }}" method="post">
-                    <input type="hidden" name="last_refresh_stock" value="{{ product.stock }}">
-                    <input type="number" name="submitted_stock" value="{{ product.stock }}" min="0" tabindex="{{ loop.index }}" title="">
-                    <input type="submit" value="Update" tabindex=-1>
-                </form>
-            </td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </table>
-    <h2>Spores</h2>
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Prints</th>
-            <th>Syringes</th>
-            <th>Vials</th>
-        </tr>
-        {% for name, spores in spores_grouped.items() %}
-        <tr>
-            <td>{{ name }}</td>
-            {% for spore in spores %}
-            <td>
-                <form action="{{ url_for('update_stock', table='spores', id=spore.id) }}" method="post">
-                    <input type="hidden" name="last_refresh_stock" value="{{ spore.stock }}">
-                    <input type="number" name="submitted_stock" value="{{ spore.stock }}" min="0" tabindex="{{ loop.index }}" title="">
-                    <input type="submit" value="Update" tabindex=-1>
-                </form>
-            </td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </table>
-    <div class="btn-group">
-        <button onclick="updateAllStock()">Update All Stock</button>
-        <button onclick="handleToggleClick()">Toggle No Stock Products</button>
-        <!-- <button onclick="toggleEmptyColumns()">Toggle Empty Columns</button> -->
+    <h2>Grow Kit Inventory</h2>
+    <div class="search-container">
+        <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search...">
+        <button class="clear-btn" onclick="clearSearch()">Clear Search</button>
+        <button class="clear-btn" onclick="updateAllStock()">Update All Stock</button>
+        <button id="toggle-button" class="clear-btn" onclick="toggleEmptyRows()">Toggle No Stock Products</button>
+        <!-- <button class="clear-btn" onclick="replaceButtons('cannabis_seeds')">Edit</button> -->
+    </div>
+    <div class="container">
+        <div class="inventory">
+            <h2>Grow Kits</h2>
+            <table>
+                <tr>
+                    <th class="name-column">Name</th>
+                    <th colspan="1">600cc</th>
+                    <th colspan="1">1200cc</th>
+                </tr>
+                {% for name, products in products_grouped.items() %}
+                <tr>
+                    <td>{{ name }}</td>
+                    {% for product in products %}
+                    <td>
+                        <form class="stock_input" action="{{ url_for('update_stock', table='growkits', id=product.id) }}" method="post">
+                            <input type="hidden" name="last_refresh_stock" value="{{ product.stock }}">
+                            <input type="number" name="submitted_stock" value="{{ product.stock }}" min="0" tabindex="{{ loop.index }}" title="">
+                            <input type="submit" value="Update" tabindex=-1>
+                        </form>
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+            <h2>Spores</h2>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Prints</th>
+                    <th>Syringes</th>
+                    <th>Vials</th>
+                </tr>
+                {% for name, spores in spores_grouped.items() %}
+                <tr>
+                    <td>{{ name }}</td>
+                    {% for spore in spores %}
+                    <td>
+                        <form action="{{ url_for('update_stock', table='spores', id=spore.id) }}" method="post">
+                            <input type="hidden" name="last_refresh_stock" value="{{ spore.stock }}">
+                            <input type="number" name="submitted_stock" value="{{ spore.stock }}" min="0" tabindex="{{ loop.index }}" title="">
+                            <input type="submit" value="Update" tabindex=-1>
+                        </form>
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="order-summary">
+            <h2>Proposed Order</h2>
+            <pre>{{ proposed_order }}</pre>
+        </div>
     </div>
 </body>
 </html>
