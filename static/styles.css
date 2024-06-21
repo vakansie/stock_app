@@ -18,7 +18,7 @@
     --light-link-border: #d0d0d0;
     --light-link-hover-bg: #cccccc;
     --light-table-header-bg: #e0e0e0;
-    --light-row-odd-bg: #f9f9f9;
+    --light-row-odd-bg: #dbdbdb;
     --light-row-even-bg: #ffffff;
     --light-input-bg: #dddddd;
     --light-placeholder-text: rgb(0, 0, 0);
@@ -46,6 +46,11 @@ body {
     color: #ffffff;
 }
 
+.nav-menu a.active {
+    background-color: var(--light-link-bg);
+    color: var(--light-text);
+}
+
 /* Table styles */
 table {
     border-collapse: collapse;
@@ -54,7 +59,7 @@ th {
     background-color: var(--table-header-bg);
     color: var(--table-header-text);
     position: sticky;
-    top: 0;
+    top: 65px;
     z-index: 10;
 }
 tr:nth-child(odd) {
@@ -87,7 +92,7 @@ button, a.clear-btn {
     cursor: pointer;
     text-decoration: none; /* Ensure links don't have underlines */
     display: inline-block; /* Ensure links have proper padding and margins */
-    padding: 10px; /* Same padding as the buttons */
+    padding: 0, 10px; /* Same padding as the buttons */
 }
 ::placeholder {
     color: var(--placeholder-text);
@@ -110,7 +115,10 @@ button, a.clear-btn {
     background-color: var(--light-link-hover-bg);
     color: var(--light-text);
 }
-
+.light-mode .nav-menu a.active {
+    background-color: var(--link-dark-bg);
+    color: var(--text-light);
+}
 .light-mode th {
     background-color: var(--light-table-header-bg);
     color: var(--light-text);
@@ -147,49 +155,14 @@ button, a.clear-btn {
     color: var(--light-placeholder-text);
     opacity: 1;
 }
+.light-mode .search-container {
+    background-color: var(--light-table-header-bg);
+}
 
 /* Basic table styles */
 table {
     border-collapse: collapse;
     table-layout: auto;
-}
-
-/* Responsive table styles */
-@media (max-width: 600px) {
-    table, thead, tbody, th, td, tr {
-        display: block;
-    }
-
-    thead tr {
-        display: none;
-    }
-
-    tr {
-        margin-bottom: 10px;
-    }
-
-    td {
-        border: none;
-        border-bottom: 1px solid #ddd;
-        position: relative;
-        padding-left: 50%;
-        text-align: right;
-    }
-
-    td:before {
-        position: absolute;
-        top: 6px;
-        left: 6px;
-        width: calc(50% - 12px);
-        white-space: nowrap;
-        content: attr(data-label);
-        text-align: left;
-        font-weight: bold;
-    }
-
-    td:last-child {
-        border-bottom: 0;
-    }
 }
 
 /* Add overflow handling */
@@ -207,12 +180,19 @@ table {
 .search-container {
     display: flex;
     align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 20; /* Ensure it is above the table headers */
+    background-color: var(--table-header-bg);
 }
 
 .clear-btn {
     margin-left: 30px;
     height: 40px;
     font-size: 16px;
-    padding: 0 10px;
+    /* padding: 0 10px; */
     cursor: pointer;
+}
+h2 {
+    padding-left: 20px; /* Adjust the value to the desired amount of padding */
 }

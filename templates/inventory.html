@@ -5,9 +5,7 @@
     <meta charset="UTF-8">
     <title>Grow Kit Inventory</title>
     <style>
-        input { 
-            text-align: right; 
-        }
+
         #proposed-order {
             margin-top: 20px;
         }
@@ -29,22 +27,22 @@
         <input type="hidden" name="refresh" value="true">
     </form>
     <div class="nav-menu">
-        <a href="{{ url_for('fastbuds') }}">Fastbuds</a>
-        <a href="{{ url_for('green_house') }}">Green House Seeds</a>
-        <a href="{{ url_for('barney') }}">Barneys Farm</a>
-        <a href="{{ url_for('dutch_passion') }}">Dutch Passion</a>
-        <a href="{{ url_for('rqs') }}">Royal Queen Seeds</a>
-        <a href="{{ url_for('all_seeds') }}">All Seeds Inventory</a>
-        <a href="{{ url_for('inventory') }}">Grow Kit Stock List</a>
+        <a href="{{ url_for('fastbuds') }}" class="{% if route == 'fastbuds' %}active{% endif %}">Fastbuds</a>
+        <a href="{{ url_for('green_house') }}" class="{% if route in ('ghs', 'ghs/all') %}active{% endif %}">Green House Seeds</a>
+        <a href="{{ url_for('barney') }}" class="{% if route == 'barney' %}active{% endif %}">Barneys Farm</a>
+        <a href="{{ url_for('dutch_passion') }}" class="{% if route == 'dutch_passion' %}active{% endif %}">Dutch Passion</a>
+        <a href="{{ url_for('rqs') }}" class="{% if route == 'rqs' %}active{% endif %}">Royal Queen Seeds</a>
+        <a href="{{ url_for('all_seeds') }}" class="{% if route == 'all_seeds' %}active{% endif %}">All Seeds Inventory</a>
+        <a href="{{ url_for('inventory') }}" class="{% if route == '' %}active{% endif %}">Grow Kit Stock List</a>
         <button id="toggle-theme">Toggle Theme</button>
     </div>
-    <h2>Grow Kit Inventory</h2>
     <div class="search-container">
         <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search...">
         <button class="clear-btn" onclick="clearSearch()">Clear Search</button>
         <button class="clear-btn" onclick="updateAllStock()">Update All Stock</button>
         <button id="toggle-button" class="clear-btn" onclick="toggleEmptyRows()">Toggle No Stock Products</button>
         <!-- <button class="clear-btn" onclick="replaceButtons('cannabis_seeds')">Edit</button> -->
+        <h2>Grow Kits</h2>
     </div>
     <div class="container">
         <div class="inventory">
@@ -72,12 +70,14 @@
             </table>
             <h2>Spores</h2>
             <table>
+                <thead id="table-header">
                 <tr>
                     <th>Name</th>
                     <th>Prints</th>
                     <th>Syringes</th>
                     <th>Vials</th>
                 </tr>
+                </thead>
                 {% for name, spores in spores_grouped.items() %}
                 <tr>
                     <td>{{ name }}</td>

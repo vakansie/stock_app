@@ -1,115 +1,155 @@
 window.addEventListener('load', initialize);
 
 function getColumnIndex(table, headerName) {
-    let headers = table.querySelectorAll('th');
-    return Array.from(headers).findIndex(header => header.textContent.trim() === headerName);
+    var headers = table.querySelectorAll('th');
+    for (var i = 0; i < headers.length; i++) {
+        if (headers[i].textContent.trim() === headerName) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 document.addEventListener("DOMContentLoaded", function() {
     if (sessionStorage.getItem("toggled") === null) {
         sessionStorage.setItem("toggled", "false");
     }
-    // Initially check and toggle rows if needed
-    if (document.title.includes("Grow Kit") && sessionStorage.getItem("toggled") === "true") {
+    if (document.title.indexOf("Grow Kit") !== -1 && sessionStorage.getItem("toggled") === "true") {
         toggleEmptyRows(true);
     }
 
-    const theme = sessionStorage.getItem('theme');
-    document.body.classList.toggle('light-mode', theme === 'light');
+    var theme = sessionStorage.getItem('theme');
+    if (theme === 'light') {
+        document.body.classList.add('light-mode');
+    } else {
+        document.body.classList.remove('light-mode');
+    }
 
     document.getElementById('toggle-theme').addEventListener('click', function () {
-        const isLightMode = document.body.classList.toggle('light-mode');
-        sessionStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+        var isLightMode = document.body.classList.contains('light-mode');
+        if (isLightMode) {
+            document.body.classList.remove('light-mode');
+            sessionStorage.setItem('theme', 'dark');
+        } else {
+            document.body.classList.add('light-mode');
+            sessionStorage.setItem('theme', 'light');
+        }
     });
 
-    document.querySelectorAll('input[type="number"], input[type="text"]').forEach(input => {
-        input.addEventListener('focus', (event) => {
+    var inputs = document.querySelectorAll('input[type="number"], input[type="text"]');
+    for (var i = 0; i < inputs.length; i++) {
+        inputs[i].addEventListener('focus', function(event) {
             event.target.select();
         });
-    });
+    }
 
-    // Add event listener for the toggle button if applicable
-    const toggleButton = document.getElementById('toggle-button');
+    var toggleButton = document.getElementById('toggle-button');
     if (toggleButton) {
         toggleButton.addEventListener('click', handleToggleClick);
     }
+
+    // Initial update for sticky header
+    updateTableHeaderTop();
+
+    // Update on window resize
+    window.addEventListener('resize', updateTableHeaderTop);
 });
 
 function handleToggleClick() {
-    const toggled = sessionStorage.getItem("toggled") === "true";
+    var toggled = sessionStorage.getItem("toggled") === "true";
     sessionStorage.setItem("toggled", !toggled);
     toggleEmptyRows(!toggled);
 }
 
 function initialize() {
-    document.querySelectorAll('input[type="number"]').forEach(input => {
-        input.classList.toggle('zero-value', input.value === '0');
-        input.addEventListener('change', function() {
+    var inputs = document.querySelectorAll('input[type="number"]');
+    for (var i = 0; i < inputs.length; i++) {
+        inputs[i].classList.toggle('zero-value', inputs[i].value === '0');
+        inputs[i].addEventListener('change', function() {
             this.classList.toggle('zero-value', this.value === '0');
         });
-    });
+    }
 
-    if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+    var navigationEntries = performance.getEntriesByType ? performance.getEntriesByType('navigation') : [];
+    if (navigationEntries.length > 0 && navigationEntries[0].type === 'reload') {
         console.log('reload detected');
-        document.getElementById('refreshForm')?.submit();
+        var refreshForm = document.getElementById('refreshForm');
+        if (refreshForm) {
+            refreshForm.submit();
+        }
     }
 
     setupInputTitles();
 }
 
 function setupInputTitles() {
-    document.querySelectorAll('table').forEach(table => {
-        const headers = table.querySelectorAll('th');
-        table.querySelectorAll('tr').forEach(row => {
-            const cells = row.querySelectorAll('td');
+    var tables = document.querySelectorAll('table');
+    for (var t = 0; t < tables.length; t++) {
+        var table = tables[t];
+        var headers = table.querySelectorAll('th');
+        var rows = table.querySelectorAll('tr');
+        for (var r = 0; r < rows.length; r++) {
+            var row = rows[r];
+            var cells = row.querySelectorAll('td');
             if (cells.length > 0) {
-                const number = cells[0]?.textContent.trim();
-                const name = cells[1]?.textContent.trim();
-                cells.forEach((cell, index) => {
-                    const header = headers[index]?.textContent || '';
-                    cell.querySelectorAll('input[type="number"]').forEach(input => {
-                        const title = number ? `${number} - ${name} - ${header}` : `${name} - ${header}`;
+                var number = cells[0].textContent.trim();
+                var name = cells[1].textContent.trim();
+                for (var c = 0; c < cells.length; c++) {
+                    var cell = cells[c];
+                    var header = headers[c] ? headers[c].textContent : '';
+                    var inputs = cell.querySelectorAll('input[type="number"]');
+                    for (var i = 0; i < inputs.length; i++) {
+                        var input = inputs[i];
+                        var title = number ? (number + " - " + name + " - " + header) : (name + " - " + header);
                         input.title = title;
-                        cell.querySelector('input[type="submit"]')?.setAttribute('title', title);
-                    });
-                });
+                        var submitInput = cell.querySelector('input[type="submit"]');
+                        if (submitInput) {
+                            submitInput.setAttribute('title', title);
+                        }
+                    }
+                }
             }
-        });
-    });
+        }
+    }
 }
 
 function updateAllStock() {
-    const forms = document.querySelectorAll('form.stock_input');
-    let pendingRequests = forms.length;
+    var forms = document.querySelectorAll('form.stock_input');
+    var pendingRequests = forms.length;
 
-    forms.forEach(form => {
-        const lastRefreshStockInput = form.querySelector('[name="last_refresh_stock"]');
-        const submittedStockInput = form.querySelector('[name="submitted_stock"]');
+    for (var i = 0; i < forms.length; i++) {
+        var form = forms[i];
+        var lastRefreshStockInput = form.querySelector('[name="last_refresh_stock"]');
+        var submittedStockInput = form.querySelector('[name="submitted_stock"]');
 
         if (lastRefreshStockInput && submittedStockInput) {
-            const lastRefreshStock = parseInt(lastRefreshStockInput.value);
-            const submittedStock = parseInt(submittedStockInput.value);
+            var lastRefreshStock = parseInt(lastRefreshStockInput.value);
+            var submittedStock = parseInt(submittedStockInput.value);
 
             if (lastRefreshStock !== submittedStock) {
-                const formData = new FormData(form);
-                fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                }).then(response => {
-                    if (response.ok) {
+                var formData = new FormData(form);
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', form.action, true);
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
                         console.log('Stock updated successfully!');
                         lastRefreshStockInput.value = submittedStock;
                     } else {
                         console.error('Error updating stock');
                     }
-                }).catch(error => {
-                    console.error('Error updating stock:', error);
-                }).finally(() => {
                     pendingRequests--;
                     if (pendingRequests === 0) {
                         location.reload();
                     }
-                });
+                };
+                xhr.onerror = function() {
+                    console.error('Error updating stock:', xhr.statusText);
+                    pendingRequests--;
+                    if (pendingRequests === 0) {
+                        location.reload();
+                    }
+                };
+                xhr.send(formData);
             } else {
                 pendingRequests--;
                 if (pendingRequests === 0) {
@@ -123,48 +163,83 @@ function updateAllStock() {
                 location.reload();
             }
         }
-    });
+    }
 }
 
 function toggleEmptyRows(shouldHide) {
-    document.querySelectorAll('table').forEach(table => {
-        Array.from(table.rows).slice(1).forEach(row => {
-            const allEmpty = Array.from(row.querySelectorAll('input[type="number"]')).every(input => parseInt(input.value) === 0);
+    var tables = document.querySelectorAll('table');
+    for (var t = 0; t < tables.length; t++) {
+        var table = tables[t];
+        var rows = table.rows;
+        for (var r = 1; r < rows.length; r++) {
+            var row = rows[r];
+            var allEmpty = true;
+            var inputs = row.querySelectorAll('input[type="number"]');
+            for (var i = 0; i < inputs.length; i++) {
+                if (parseInt(inputs[i].value) !== 0) {
+                    allEmpty = false;
+                    break;
+                }
+            }
             row.style.display = shouldHide && allEmpty ? 'none' : '';
-        });
-    });
+        }
+    }
 }
 
 function toggleEmptyColumns() {
-    document.querySelectorAll('table').forEach(table => {
-        const headers = table.querySelectorAll('th');
-        headers.forEach((_, i) => {
-            if (i > 1) { // Skip the first two columns
-                const allEmpty = Array.from(table.querySelectorAll(`td:nth-child(${i + 1}) input[type="number"]`)).every(input => parseInt(input.value) === 0);
-                const display = allEmpty ? 'none' : '';
-                table.querySelectorAll(`td:nth-child(${i + 1})`).forEach(cell => {
-                    cell.style.display = display;
-                });
+    var tables = document.querySelectorAll('table');
+    for (var t = 0; t < tables.length; t++) {
+        var table = tables[t];
+        var headers = table.querySelectorAll('th');
+        for (var i = 2; i < headers.length; i++) {
+            var allEmpty = true;
+            var cells = table.querySelectorAll('td:nth-child(' + (i + 1) + ') input[type="number"]');
+            for (var j = 0; j < cells.length; j++) {
+                if (parseInt(cells[j].value) !== 0) {
+                    allEmpty = false;
+                    break;
+                }
             }
-        });
-    });
+            var display = allEmpty ? 'none' : '';
+            for (var c = 0; c < cells.length; c++) {
+                cells[c].style.display = display;
+            }
+        }
+    }
 }
 
 function getNameColumnIndex(table) {
-    return Array.from(table.querySelectorAll('th')).findIndex(header => header.textContent.trim() === "Name");
+    var headers = table.querySelectorAll('th');
+    for (var i = 0; i < headers.length; i++) {
+        if (headers[i].textContent.trim() === "Name") {
+            return i;
+        }
+    }
+    return -1;
 }
 
 function searchTable() {
-    const filter = document.getElementById("searchInput").value.toUpperCase();
-    document.querySelectorAll("table").forEach(table => {
-        let hasVisibleRow = false;
-        Array.from(table.rows).slice(1).forEach(row => { // Skip the header row
-            const rowHasMatch = Array.from(row.cells).some(cell => cell.textContent.toUpperCase().includes(filter));
+    var filter = document.getElementById("searchInput").value.toUpperCase();
+    var tables = document.querySelectorAll("table");
+    for (var t = 0; t < tables.length; t++) {
+        var table = tables[t];
+        var hasVisibleRow = false;
+        var rows = table.rows;
+        for (var r = 1; r < rows.length; r++) {
+            var row = rows[r];
+            var rowHasMatch = false;
+            var cells = row.cells;
+            for (var c = 0; c < cells.length; c++) {
+                if (cells[c].textContent.toUpperCase().indexOf(filter) > -1) {
+                    rowHasMatch = true;
+                    break;
+                }
+            }
             row.style.display = rowHasMatch ? "" : "none";
             if (rowHasMatch) hasVisibleRow = true;
-        });
+        }
         table.style.display = hasVisibleRow ? "" : "none";
-    });
+    }
 }
 
 function clearSearch() {
@@ -173,16 +248,35 @@ function clearSearch() {
 }
 
 function replaceButtons() {
-    document.querySelectorAll('form[action*="update_stock"]').forEach(form => {
-        const editButton = document.createElement('button');
+    var forms = document.querySelectorAll('form[action*="update_stock"]');
+    for (var i = 0; i < forms.length; i++) {
+        var form = forms[i];
+        var editButton = document.createElement('button');
         editButton.type = 'button';
         editButton.innerText = 'Edit';
-        editButton.onclick = function() {
-            const parts = form.action.split('/');
-            const id = parts[parts.length - 1];
-            const table = parts[parts.length - 2];
-            window.location.href = `/edit_product/${table}/${id}`;
-        };
+        editButton.onclick = (function(f) {
+            return function() {
+                var parts = f.action.split('/');
+                var id = parts[parts.length - 1];
+                var table = parts[parts.length - 2];
+                window.location.href = '/edit_product/' + table + '/' + id;
+            };
+        })(form);
         form.parentNode.replaceChild(editButton, form);
-    });
+    }
+}
+
+// Function to update the top value of the sticky table header based on search-container height
+function updateTableHeaderTop() {
+    var searchContainer = document.getElementById('search-container');
+    var tableHeader = document.getElementById('table-header');
+
+    if (searchContainer && tableHeader) {
+        var searchContainerHeight = searchContainer.offsetHeight;
+        var headerCells = tableHeader.querySelectorAll('th');
+
+        for (var i = 0; i < headerCells.length; i++) {
+            headerCells[i].style.top = searchContainerHeight + 'px';
+        }
+    }
 }

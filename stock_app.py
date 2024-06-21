@@ -37,12 +37,22 @@ def get_db_connection():
 def inventory():
     growkits_grouped, spores_grouped = get_mushrooms_grouped()
     proposed_order = get_grow_kit_order_proposal()
-    return render_template('inventory.html', products_grouped=growkits_grouped, spores_grouped=spores_grouped, proposed_order=proposed_order)
+    return render_template('inventory.html',
+                           products_grouped=growkits_grouped,
+                           route='',
+                           spores_grouped=spores_grouped,
+                           proposed_order=proposed_order)
 
 @app.route('/fastbuds')
 def fastbuds():
     seeds_grouped, pack_sizes = get_seeds_grouped('Fastbuds')
-    return render_template('seed_inventory.html', cannabis_strains_colors=cannabis_strains_colors, seeds_grouped=seeds_grouped, pack_sizes=pack_sizes, page_title='Fastbuds Seeds', route='fastbuds', page_header='Fastbuds Inventory')
+    return render_template('seed_inventory.html',
+                           cannabis_strains_colors=cannabis_strains_colors,
+                           seeds_grouped=seeds_grouped,
+                           pack_sizes=pack_sizes,
+                           page_title='Fastbuds Seeds',
+                           route='fastbuds',
+                           page_header='Fastbuds')
 
 @app.route('/ghs')
 def green_house():
@@ -53,7 +63,7 @@ def green_house():
                            pack_sizes=pack_sizes, 
                            page_title='Green House Seeds', 
                            route='ghs/all', 
-                           page_header='Green House Inventory',
+                           page_header='Green House',
                            show_toggle=True)
 
 @app.route('/ghs/all')
@@ -65,22 +75,39 @@ def green_house_all():
                            pack_sizes=pack_sizes, 
                            page_title='Green House Seeds', 
                            route='ghs', 
-                           page_header='Green House Seeds Inventory',
+                           page_header='Green House',
                            show_toggle=True)
 @app.route('/barney')
 def barney():
     seeds_grouped, pack_sizes = get_seeds_grouped('Barneys Farm')
-    return render_template('seed_inventory.html', cannabis_strains_colors=cannabis_strains_colors, seeds_grouped=seeds_grouped, pack_sizes=pack_sizes, page_title='Barneys Farm', route='barney', page_header='Barneys Farm Inventory')
+    return render_template('seed_inventory.html',
+                           cannabis_strains_colors=cannabis_strains_colors,
+                           seeds_grouped=seeds_grouped, pack_sizes=pack_sizes,
+                           page_title='Barneys Farm',
+                           route='barney',
+                           page_header='Barneys Farm')
 
 @app.route('/dutch_passion')
 def dutch_passion():
     seeds_grouped, pack_sizes = get_seeds_grouped('Dutch Passion')
-    return render_template('seed_inventory.html', cannabis_strains_colors=cannabis_strains_colors, seeds_grouped=seeds_grouped, pack_sizes=pack_sizes, page_title='Dutch Passion', route='dutch_passion', page_header='Dutch Passion Inventory')
+    return render_template('seed_inventory.html',
+                           cannabis_strains_colors=cannabis_strains_colors,
+                           seeds_grouped=seeds_grouped,
+                           pack_sizes=pack_sizes,
+                           page_title='Dutch Passion',
+                           route='dutch_passion',
+                           page_header='Dutch Passion')
 
 @app.route('/rqs')
 def rqs():
     seeds_grouped, pack_sizes = get_seeds_grouped('Royal Queen Seeds')
-    return render_template('seed_inventory.html', cannabis_strains_colors=cannabis_strains_colors, seeds_grouped=seeds_grouped, pack_sizes=pack_sizes, page_title='Royal Queen Seeds', route='rqs', page_header='Royal Queen Seeds Inventory')
+    return render_template('seed_inventory.html',
+                           cannabis_strains_colors=cannabis_strains_colors,
+                           seeds_grouped=seeds_grouped,
+                           pack_sizes=pack_sizes,
+                           page_title='Royal Queen Seeds',
+                           route='rqs',
+                           page_header='Royal Queen Seeds')
 
 @app.route('/all_seeds')
 def all_seeds():
@@ -98,7 +125,12 @@ def all_seeds():
         pack_size = seed['pack_size']
         seeds_by_type[seed_type][(name, manufacturer)].append(seed)
         pack_sizes[seed_type].add(pack_size)
-    return render_template('all_seeds_inventory.html', cannabis_strains_colors=cannabis_strains_colors, seeds_by_type=seeds_by_type, pack_sizes=pack_sizes, allowed_fields=allowed_fields)
+    return render_template('all_seeds_inventory.html',
+                           cannabis_strains_colors=cannabis_strains_colors,
+                           seeds_by_type=seeds_by_type,
+                           route='all_seeds',
+                           pack_sizes=pack_sizes,
+                           allowed_fields=allowed_fields)
 
 def get_seeds(manufacturer):
     with get_db_connection() as conn:
@@ -189,6 +221,27 @@ def get_grow_kit_order_proposal():
             order_summary.append('No grow kit order needed with the current stock.')
         return '\n'.join(order_summary)
 
+def get_allowed_fields(conn, table_name):
+    cursor = conn.cursor()
+    cursor.execute(f"PRAGMA table_info({table_name})")
+    columns = cursor.fetchall()
+    allowed_fields = {col[1] for col in columns if col[5] == 0}  # column name is at index 1, pk flag at index 5
+    return allowed_fields
+
+def get_unique_values(table_name):
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"PRAGMA table_info({table_name})")
+        columns_info = cursor.fetchall()
+        exclusions = {'id', 'name', 'retail_price', 'wholesale_price', 'stock', 'storage_location_number'}
+        allowed_columns = [col[1] for col in columns_info if col[1] not in exclusions and col[5] == 0]
+        unique_values = {}
+        for column in allowed_columns:
+            cursor.execute(f"SELECT DISTINCT {column} FROM {table_name}")
+            fetched_values = cursor.fetchall()
+            unique_values[column] = [val[0] for val in fetched_values]
+    return unique_values
+
 @app.route('/update_stock/<table>/<int:id>', methods=["POST"])
 def update_stock(table, id):
     if table not in ALLOWED_TABLES:
@@ -210,26 +263,6 @@ def update_stock(table, id):
 def refresh_page():
     return redirect(request.headers.get('Referer', '/'))
 
-def get_allowed_fields(conn, table_name):
-    cursor = conn.cursor()
-    cursor.execute(f"PRAGMA table_info({table_name})")
-    columns = cursor.fetchall()
-    allowed_fields = {col[1] for col in columns if col[5] == 0}  # column name is at index 1, pk flag at index 5
-    return allowed_fields
-
-def get_unique_values(table_name):
-    with get_db_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute(f"PRAGMA table_info({table_name})")
-        columns_info = cursor.fetchall()
-        exclusions = {'id', 'name', 'retail_price', 'wholesale_price', 'stock', 'storage_location_number'}
-        allowed_columns = [col[1] for col in columns_info if col[1] not in exclusions and col[5] == 0]
-        unique_values = {}
-        for column in allowed_columns:
-            cursor.execute(f"SELECT DISTINCT {column} FROM {table_name}")
-            fetched_values = cursor.fetchall()
-            unique_values[column] = [val[0] for val in fetched_values]
-    return unique_values
 
 @app.route('/edit_product/<table>/<int:id>', methods=["GET"])
 def edit_product(table, id):
