@@ -34,14 +34,16 @@
         <a href="{{ url_for('rqs') }}" class="{% if route == 'rqs' %}active{% endif %}">Royal Queen Seeds</a>
         <a href="{{ url_for('all_seeds') }}" class="{% if route == 'all_seeds' %}active{% endif %}">All Seeds Inventory</a>
         <a href="{{ url_for('inventory') }}" class="{% if route == '' %}active{% endif %}">Grow Kit Stock List</a>
+        <a href="{{ url_for('show_log') }}" class="{% if route == 'log' %}active{% endif %}">Log</a>
         <button id="toggle-theme">Toggle Theme</button>
     </div>
     <div class="search-container">
         <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search...">
         <button class="clear-btn" onclick="clearSearch()">Clear Search</button>
-        <button class="clear-btn" onclick="updateAllStock()">Update All Stock</button>
-        <button id="toggle-button" class="clear-btn" onclick="toggleEmptyRows()">Toggle No Stock Products</button>
+        <button class="clear-btn" onclick="updateAllStock()">Update All</button>
         <!-- <button class="clear-btn" onclick="replaceButtons('cannabis_seeds')">Edit</button> -->
+        <button id="toggle-button" class="clear-btn" onclick="toggleEmptyRows()">Toggle Stock</button>
+        <button class="clear-btn" onclick="scrollToTop()">Page Up</button>
         <h2>Grow Kits</h2>
     </div>
     <div class="container">
@@ -83,7 +85,7 @@
                     <td>{{ name }}</td>
                     {% for spore in spores %}
                     <td>
-                        <form action="{{ url_for('update_stock', table='spores', id=spore.id) }}" method="post">
+                        <form class="stock_input" action="{{ url_for('update_stock', table='spores', id=spore.id) }}" method="post">
                             <input type="hidden" name="last_refresh_stock" value="{{ spore.stock }}">
                             <input type="number" name="submitted_stock" value="{{ spore.stock }}" min="0" tabindex="{{ loop.index }}" title="">
                             <input type="submit" value="Update" tabindex=-1>

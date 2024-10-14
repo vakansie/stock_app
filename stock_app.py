@@ -4,6 +4,12 @@ import webbrowser
 import socket
 from collections import defaultdict, Counter
 from desired_stock import grow_kit_full_stock_1200cc
+import logging
+# import psutil
+import os
+import sys
+
+logging.basicConfig(filename=r'logs/stock_app.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 ALLOWED_TABLES = {'growkits', 'spores', 'cannabis_seeds'}
 manufacturer_routes = {
@@ -52,7 +58,7 @@ def fastbuds():
                            pack_sizes=pack_sizes,
                            page_title='Fastbuds Seeds',
                            route='fastbuds',
-                           page_header='Fastbuds')
+                           page_header='420FB')
 
 @app.route('/ghs')
 def green_house():
@@ -63,7 +69,7 @@ def green_house():
                            pack_sizes=pack_sizes, 
                            page_title='Green House Seeds', 
                            route='ghs/all', 
-                           page_header='Green House',
+                           page_header='GHS',
                            show_toggle=True)
 
 @app.route('/ghs/all')
@@ -75,7 +81,7 @@ def green_house_all():
                            pack_sizes=pack_sizes, 
                            page_title='Green House Seeds', 
                            route='ghs', 
-                           page_header='Green House',
+                           page_header='GHS',
                            show_toggle=True)
 @app.route('/barney')
 def barney():
@@ -85,7 +91,7 @@ def barney():
                            seeds_grouped=seeds_grouped, pack_sizes=pack_sizes,
                            page_title='Barneys Farm',
                            route='barney',
-                           page_header='Barneys Farm')
+                           page_header='Barney')
 
 @app.route('/dutch_passion')
 def dutch_passion():
@@ -96,7 +102,7 @@ def dutch_passion():
                            pack_sizes=pack_sizes,
                            page_title='Dutch Passion',
                            route='dutch_passion',
-                           page_header='Dutch Passion')
+                           page_header='DP')
 
 @app.route('/rqs')
 def rqs():
@@ -107,13 +113,13 @@ def rqs():
                            pack_sizes=pack_sizes,
                            page_title='Royal Queen Seeds',
                            route='rqs',
-                           page_header='Royal Queen Seeds')
+                           page_header='RQS')
 
 @app.route('/all_seeds')
 def all_seeds():
     with get_db_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM cannabis_seeds")
+        cursor.execute("SELECT * FROM cannabis_seeds ORDER BY manufacturer, storage_location_number;")
         seeds = cursor.fetchall()
         allowed_fields = get_allowed_fields(conn, 'cannabis_seeds')
     seeds_by_type = defaultdict(lambda: defaultdict(list))
@@ -188,23 +194,28 @@ def get_grow_kit_order_proposal():
         current_stock = Counter({product['name']: product['stock'] for product in products})
         proposed_order = preferred_stock_1200cc - current_stock
         order_summary = []
-        if proposed_order.total() >= 20:
+        if proposed_order.total() - proposed_order['Golden Teacher'] >= 20 or proposed_order['Golden Teacher'] >= 20:
             order_summary.append('freshmushrooms@freshmushrooms.nl\n')
             order_summary.append('Hoi Astrid,\n\nIk zou graag bestellen:\n')
             if proposed_order['Golden Teacher'] >= 15:
                 order_summary.append('1 doos 1200cc GT')
-                proposed_order['Golden Teacher'] = 0
+            proposed_order['Golden Teacher'] = 0
             if proposed_order['McKennaii'] >= 15:
                 order_summary.append('1 doos 1200cc MCK')
                 proposed_order['McKennaii'] = 0
             while proposed_order.total() >= 20:
                 box_items = Counter()
-                for product, qty in proposed_order.items():
-                    if box_items.total() < 20:
-                        if qty > 0:
-                            take_qty = min(qty, 20 - box_items.total())
-                            box_items[product] = take_qty
-                            proposed_order[product] -= take_qty
+                # Sort products by proposed order quantity in descending order
+                sorted_products = sorted(proposed_order.items(), key=lambda x: x[1], reverse=True)
+                product_list = [product for product, qty in sorted_products for _ in range(qty)]
+                index = 0
+                while box_items.total() < 20 and index < len(product_list):
+                    product = product_list[index]
+                    if proposed_order[product] > 0:
+                        take_qty = min(proposed_order[product], 20 - box_items.total())
+                        box_items[product] += take_qty
+                        proposed_order[product] -= take_qty
+                    index = (index + 1) % len(product_list)  # Move to the next product in a round-robin fashion
                 if box_items:
                     order_summary.append('1 doos 1200cc met:')
                     for product, qty in box_items.items():
@@ -212,11 +223,10 @@ def get_grow_kit_order_proposal():
             remaining_kits = proposed_order.total()
             order_summary.append('\nGroeten,\nFrans\n')
             if remaining_kits > 0:
-                order_summary.append('Remainder kits as they do not fill a full box:')
+                order_summary.append(f'{remaining_kits} remaining kits as they do not fill a full box of 20:')
                 for product, qty in proposed_order.items():
-                    if qty > 0:
+                    if qty:
                         order_summary.append(f' {qty} {product}')
-                order_summary.append(f'\nTotal remaining kits: {remaining_kits} (not enough to fill a box of 20)')
         else:
             order_summary.append('No grow kit order needed with the current stock.')
         return '\n'.join(order_summary)
@@ -242,27 +252,39 @@ def get_unique_values(table_name):
             unique_values[column] = [val[0] for val in fetched_values]
     return unique_values
 
+query_table = {
+    'cannabis_seeds': ['name', 'pack_size', 'seed_type', 'manufacturer', 'stock', 'retail_price', 'storage_location_number'],
+    'spores'        : ['name', 'form', 'stock'],
+    'growkits'      : ['name', 'size', 'stock', 'retail_price']
+            }
+
 @app.route('/update_stock/<table>/<int:id>', methods=["POST"])
 def update_stock(table, id):
     if table not in ALLOWED_TABLES:
-        print('noot allowed: table')
+        print(f'not allowed: table: {str(table)}')
         return "Invalid table specified.", 400
     last_refresh_stock = int(request.form['last_refresh_stock'])
     submitted_stock = int(request.form['submitted_stock']) if 'submitted_stock' in request.form and request.form['submitted_stock'] else last_refresh_stock
     stock_difference = submitted_stock - last_refresh_stock
     if not stock_difference:
         return redirect(request.headers.get('Referer', '/'))
-    print(f'id: {id}, table: {table}, last_refresh_stock: {last_refresh_stock}, submitted_stock: {submitted_stock}, stock_difference: {stock_difference}')
+    log = f'{"-"*10}\nid: {id}, table: {table}, last_refresh_stock: {last_refresh_stock}, submitted_stock: {submitted_stock}, stock_difference: {stock_difference}'
+    # print(log)
     with get_db_connection() as conn:
         query = 'UPDATE {} SET stock = stock + ? WHERE id = ?'.format(table)
         conn.execute(query, (stock_difference, id))
         conn.commit()
+        to_select = ', '.join(query_table[table])
+        query = 'SELECT {} FROM {} WHERE id = ?'.format(to_select, table)
+        cursor = conn.execute(query, (id,))
+        product = cursor.fetchone()
+        # print( ', '.join([f'{col}: {val}' for col, val in zip(query_table[table], product)]))
+        logging.info( log + '\n' + ', '.join([f'{col}: {val}' for col, val in zip(query_table[table], product)]))
     return redirect(request.headers.get('Referer', '/'))
 
 @app.route('/refresh', methods=["POST"])
 def refresh_page():
     return redirect(request.headers.get('Referer', '/'))
-
 
 @app.route('/edit_product/<table>/<int:id>', methods=["GET"])
 def edit_product(table, id):
@@ -291,6 +313,8 @@ def update_product(table, id):
         query = f'UPDATE {table} SET {set_clause} WHERE id = ?'
         conn.execute(query, values)
         conn.commit()
+        if table == 'cannabis_seeds':
+            adjust_store_locations(conn, table, request.form.get('storage_location_number'), request.form.get('name'), request.form.get('manufacturer'), request.form.get('seed_type'))
     return redirect(f'/{manufacturer_routes.get(update_data["manufacturer"], "")}')
 
 @app.route('/add_product/<table>', methods=["GET", "POST"])
@@ -304,12 +328,13 @@ def add_product(table):
                 return "All fields are required.", 400
             manufacturer = request.form.get('manufacturer')
             if table == 'cannabis_seeds':
-                adjust_store_locations(conn, table, request.form.get('storage_location_number'), request.form.get('name'), manufacturer)
+                adjust_store_locations(conn, table, request.form.get('storage_location_number'), request.form.get('name'), manufacturer, request.form.get('seed_type'))
             columns = ', '.join(new_product_data.keys())
             placeholders = ', '.join(['?'] * len(new_product_data))
             query = f'INSERT INTO {table} ({columns}) VALUES ({placeholders})'
             conn.execute(query, list(new_product_data.values()))
             conn.commit()
+            logging.info(new_product_data)
             return redirect(f'/{manufacturer_routes.get(manufacturer, "")}')
     return render_template('add_product.html', fields=allowed_fields, unique_values=unique_values, table=table)
 
@@ -326,24 +351,39 @@ def delete_product(table, id):
         conn.commit()
     return redirect(f'/{manufacturer_routes.get(manufacturer, "")}')
 
-def adjust_store_locations(conn, table, new_location, name, manufacturer):
+def adjust_store_locations(conn, table, new_location, name, manufacturer, seed_type):
     new_location = int(new_location)
-    print('running adjuster')
-    print(f'table: {table}, chosen location: {new_location}, name: {name}, manufacturer: {manufacturer}')
+    logging.info('running number adjuster')
+    logging.info(f'table: {table}, chosen location: {new_location}, name: {name}, manufacturer: {manufacturer}')
     
     products_to_adjust = conn.execute(
-        f'SELECT id, name, storage_location_number FROM {table} WHERE storage_location_number >= ? AND name != ? AND manufacturer = ? ORDER BY storage_location_number ASC',
-        (new_location, name, manufacturer)
+        f'SELECT id, name, storage_location_number FROM {table} WHERE storage_location_number >= ? AND name != ? AND manufacturer = ? AND seed_type = ? ORDER BY storage_location_number ASC',
+        (new_location, name, manufacturer, seed_type)
     ).fetchall()
     for product in products_to_adjust:
+        if product['storage_location_number'] > new_location:
+            return
         if product['storage_location_number'] == new_location:
-            print(f"{product['name']} changed from {new_location} to {new_location + 1}")
+            # print(f"{product['name']} changed from {new_location} to {new_location + 1}")
+            logging.info(f"{product['name']} changed from {new_location} to {new_location + 1}")
             conn.execute(
                 f'UPDATE {table} SET storage_location_number = storage_location_number + 1 WHERE name = ? AND manufacturer = ?',
                 (product['name'], manufacturer)
             )
             conn.commit()
             new_location += 1
+
+@app.route('/log')
+def show_log():
+    log_content = ""
+    with open(r'logs/stock_app.log', 'r') as log_file:
+        lines = log_file.readlines()
+        lines.reverse()
+        log_content = '\n'.join(lines[:100])
+    if not log_content:
+        log_content = "Log file not found."
+    return render_template('log.html', log_content=log_content)
+
 
 def main():
     get_grow_kit_order_proposal()
@@ -353,6 +393,7 @@ def main():
     print(f'\nrunning on http://{ipv4_address}:8080/\n')
     webbrowser.open(f'http://{ipv4_address}:8080/', new=2)
     serve(app, host=f'{ipv4_address}', port=8080)
+    # app.run(debug=True)
 
 if __name__ == '__main__':
     main()

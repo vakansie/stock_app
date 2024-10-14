@@ -1,0 +1,265 @@
+2024-07-03 18:26:29,781 - INFO - Serving on http://192.168.56.1:8080
+2024-07-03 18:26:34,166 - INFO - id: 14, table: growkits, last_refresh_stock: 4, submitted_stock: 3, stock_difference: -1
+name: B+, size: 1200, stock: 3
+2024-07-12 21:10:36,600 - INFO - Serving on http://192.168.56.1:8080
+2024-07-13 17:13:19,476 - INFO - Serving on http://192.168.56.1:8080
+2024-07-13 17:14:06,756 - ERROR - Exception on /log [GET]
+Traceback (most recent call last):
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\Desktop\mapmap\kosmic_python\kosmic running\stock_app.py", line 370, in show_log
+    with open(r'//NAS4FREE/data/fransprut/kosmic_python/logs/stock_app.log', 'r') as log_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '//NAS4FREE/data/fransprut/kosmic_python/logs/stock_app.log'
+2024-07-13 17:14:19,787 - INFO - Serving on http://192.168.56.1:8080
+2024-07-13 17:14:27,846 - ERROR - Exception on /log [GET]
+Traceback (most recent call last):
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\Desktop\mapmap\kosmic_python\kosmic running\stock_app.py", line 370, in show_log
+    with open(r'//NAS4FREE/data/fransprut/kosmic_python/logs/stock_app.log', 'r') as log_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '//NAS4FREE/data/fransprut/kosmic_python/logs/stock_app.log'
+2024-07-13 17:15:13,163 - INFO - Serving on http://192.168.56.1:8080
+2024-07-13 17:15:19,486 - ERROR - Exception on /log [GET]
+Traceback (most recent call last):
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\Desktop\mapmap\kosmic_python\kosmic running\stock_app.py", line 376, in show_log
+    return render_template('log.html', log_content=log_content)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\templating.py", line 149, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\jinja2\environment.py", line 1081, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\jinja2\environment.py", line 1010, in get_template
+    return self._load_template(name, globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\jinja2\environment.py", line 969, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\jinja2\loaders.py", line 125, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\templating.py", line 65, in get_source
+    return self._get_source_fast(environment, template)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\templating.py", line 99, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: log.html
+2024-07-13 17:15:58,904 - INFO - Serving on http://192.168.56.1:8080
+2024-07-13 17:25:44,430 - INFO - id: 1844, table: cannabis_seeds, last_refresh_stock: 5, submitted_stock: 2, stock_difference: -3
+name: AMG, pack_size: 1, seed_type: Feminized, manufacturer: Royal Queen Seeds, storage_location_number: 1, retail_price: 12.5, stock: 2
+2024-07-16 22:22:59,994 - INFO - Serving on http://192.168.56.1:8080
+2024-07-16 23:05:43,462 - INFO - id: 2688, table: cannabis_seeds, last_refresh_stock: 3, submitted_stock: 2, stock_difference: -1
+name: Alien OG, pack_size: 1, seed_type: Feminized, manufacturer: Royal Queen Seeds, storage_location_number: 2, retail_price: 10.0, stock: 2
+2024-07-16 23:05:46,104 - INFO - id: 2688, table: cannabis_seeds, last_refresh_stock: 2, submitted_stock: 3, stock_difference: 1
+name: Alien OG, pack_size: 1, seed_type: Feminized, manufacturer: Royal Queen Seeds, storage_location_number: 2, retail_price: 10.0, stock: 3
+2024-07-17 17:39:03,396 - INFO - Serving on http://192.168.56.1:8080
+2024-07-17 17:39:11,111 - INFO - id: 1845, table: cannabis_seeds, last_refresh_stock: 2, submitted_stock: 3, stock_difference: 1
+name: AMG, pack_size: 3, seed_type: Feminized, manufacturer: Royal Queen Seeds, storage_location_number: 1, retail_price: 30.0, stock: 3
+2024-07-17 17:39:12,997 - INFO - id: 1845, table: cannabis_seeds, last_refresh_stock: 3, submitted_stock: 2, stock_difference: -1
+name: AMG, pack_size: 3, seed_type: Feminized, manufacturer: Royal Queen Seeds, storage_location_number: 1, retail_price: 30.0, stock: 2
+2024-07-19 10:02:44,317 - INFO - Serving on http://192.168.56.1:8080
+2024-07-19 10:02:49,905 - ERROR - Exception on /log [GET]
+Traceback (most recent call last):
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\Desktop\mapmap\kosmic_python\kosmic running\stock_app.py", line 376, in show_log
+    with open(r'//NAS4FREE/data/fransprut/kosmic_python/logs/stock_app.log', 'r') as log_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '//NAS4FREE/data/fransprut/kosmic_python/logs/stock_app.log'
+2024-07-19 10:03:52,132 - ERROR - Exception on /log [GET]
+Traceback (most recent call last):
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\Desktop\mapmap\kosmic_python\kosmic running\stock_app.py", line 376, in show_log
+    with open(r'//NAS4FREE/data/fransprut/kosmic_python/logs/stock_app.log', 'r') as log_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '//NAS4FREE/data/fransprut/kosmic_python/logs/stock_app.log'
+2024-07-19 10:05:41,377 - INFO - Serving on http://192.168.56.1:8080
+2024-07-20 15:25:28,337 - INFO - Serving on http://192.168.56.1:8080
+2024-07-20 15:29:59,706 - INFO - id: 1522, table: cannabis_seeds, last_refresh_stock: 0, submitted_stock: 1, stock_difference: 1
+name: Skunk #11, pack_size: 1, seed_type: Feminized, manufacturer: Dutch Passion, storage_location_number: 41, retail_price: 12.95, stock: 1
+2024-07-20 15:30:08,522 - INFO - id: 1522, table: cannabis_seeds, last_refresh_stock: 1, submitted_stock: 0, stock_difference: -1
+name: Skunk #11, pack_size: 1, seed_type: Feminized, manufacturer: Dutch Passion, storage_location_number: 41, retail_price: 12.95, stock: 0
+2024-07-20 15:46:42,939 - INFO - id: 631, table: cannabis_seeds, last_refresh_stock: 2, submitted_stock: 3, stock_difference: 1
+name: GG4 Sherbet FF, pack_size: 1, seed_type: Feminized, manufacturer: Fastbuds, storage_location_number: 101, retail_price: 13.0, stock: 3
+2024-07-20 15:46:46,025 - INFO - id: 631, table: cannabis_seeds, last_refresh_stock: 3, submitted_stock: 2, stock_difference: -1
+name: GG4 Sherbet FF, pack_size: 1, seed_type: Feminized, manufacturer: Fastbuds, storage_location_number: 101, retail_price: 13.0, stock: 2
+2024-07-20 15:46:52,028 - INFO - id: 271, table: cannabis_seeds, last_refresh_stock: 10, submitted_stock: 9, stock_difference: -1
+name: Amnesia Zkittles Auto, pack_size: 1, seed_type: Feminized Autoflower, manufacturer: Fastbuds, storage_location_number: 200, retail_price: 13.0, stock: 9
+2024-07-20 15:46:55,402 - INFO - id: 271, table: cannabis_seeds, last_refresh_stock: 9, submitted_stock: 10, stock_difference: 1
+name: Amnesia Zkittles Auto, pack_size: 1, seed_type: Feminized Autoflower, manufacturer: Fastbuds, storage_location_number: 200, retail_price: 13.0, stock: 10
+2024-07-21 11:28:22,493 - INFO - Serving on http://192.168.56.1:8080
+2024-07-21 12:09:35,736 - INFO - id: 1432, table: cannabis_seeds, last_refresh_stock: 2, submitted_stock: 1, stock_difference: -1
+name: Durban Dew, pack_size: 5, seed_type: Feminized, manufacturer: Dutch Passion, storage_location_number: 16, retail_price: 52.95, stock: 1
+2024-07-21 12:09:39,357 - INFO - id: 1432, table: cannabis_seeds, last_refresh_stock: 1, submitted_stock: 2, stock_difference: 1
+name: Durban Dew, pack_size: 5, seed_type: Feminized, manufacturer: Dutch Passion, storage_location_number: 16, retail_price: 52.95, stock: 2
+2024-08-01 22:50:31,855 - INFO - Serving on http://192.168.56.1:8080
+2024-08-08 20:32:56,581 - INFO - Serving on http://192.168.56.1:8080
+2024-08-08 20:34:30,953 - INFO - Serving on http://192.168.56.1:8080
+2024-08-08 20:35:37,995 - ERROR - Exception on /log [GET]
+Traceback (most recent call last):
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\Desktop\mapmap\kosmic_python\kosmic running\stock_app.py", line 376, in show_log
+    with open(r'logs/stock_app.log', 'r') as log_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '//NAS4FREE/data/fransprut/kosmic_python/logs/stock_app.log'
+2024-08-08 20:38:15,079 - INFO - Serving on http://192.168.56.1:8080
+2024-08-08 20:38:23,084 - ERROR - Exception on /log [GET]
+Traceback (most recent call last):
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\Desktop\mapmap\kosmic_python\kosmic running\stock_app.py", line 376, in show_log
+    with open(r'logs/stock_app.log', 'r') as log_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '//NAS4FREE/data/fransprut/kosmic_python/logs/stock_app.log'
+2024-08-08 20:39:36,080 - ERROR - Exception on /log [GET]
+Traceback (most recent call last):
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\Desktop\mapmap\kosmic_python\kosmic running\stock_app.py", line 376, in show_log
+    with open(r'logs/stock_app.log', 'r') as log_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '//NAS4FREE/data/fransprut/kosmic_python/logs/stock_app.log'
+2024-08-08 20:40:43,474 - ERROR - Exception on /log [GET]
+Traceback (most recent call last):
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\Desktop\mapmap\kosmic_python\kosmic running\stock_app.py", line 376, in show_log
+    with open(r'stock_app.log', 'r') as log_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '//NAS4FREE/data/fransprut/kosmic_python/logs/stock_app.log'
+2024-09-11 17:47:52,613 - INFO - Serving on http://192.168.56.1:8080
+2024-09-11 17:47:56,907 - ERROR - Exception on /log [GET]
+Traceback (most recent call last):
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\Desktop\mapmap\kosmic_python\kosmic running\stock_app.py", line 379, in show_log
+    with open(r'//NAS4FREE/data/fransprut/kosmic_python/logs/stock_app.log', 'r') as log_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '//NAS4FREE/data/fransprut/kosmic_python/logs/stock_app.log'
+2024-09-11 17:48:52,966 - ERROR - Exception on /log [GET]
+Traceback (most recent call last):
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\AppData\Local\Programs\Python\Python312\Lib\site-packages\flask\app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\win 10\Desktop\mapmap\kosmic_python\kosmic running\stock_app.py", line 379, in show_log
+    with open(r'//NAS4FREE/data/fransprut/kosmic_python/logs/stock_app.log', 'r') as log_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '//NAS4FREE/data/fransprut/kosmic_python/logs/stock_app.log'
+2024-09-11 17:49:14,755 - INFO - Serving on http://192.168.56.1:8080
+2024-09-25 12:39:44,694 - INFO - Serving on http://192.168.56.1:8080

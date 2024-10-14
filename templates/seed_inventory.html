@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Product Inventory">
-    <title>{{  page_title  }}</title>
+    <title>{{ page_title }}</title>
     <style>
         input[type='number']{
             width: 60px;
@@ -27,23 +27,32 @@
         <a href="{{ url_for('rqs') }}" class="{% if route == 'rqs' %}active{% endif %}">Royal Queen Seeds</a>
         <a href="{{ url_for('all_seeds') }}" class="{% if route == 'all_seeds' %}active{% endif %}">All Seeds Inventory</a>
         <a href="{{ url_for('inventory') }}" class="{% if route == '' %}active{% endif %}">Grow Kit Stock List</a>
+        <a href="{{ url_for('show_log') }}" class="{% if route == 'log' %}active{% endif %}">Log</a>
         <button id="toggle-theme">Toggle Theme</button>
     </div>
     <div class="search-container">
         <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search...">
         <button class="clear-btn" onclick="clearSearch()">Clear Search</button>
-        <button class="clear-btn" onclick="updateAllStock()">Update All Stock</button>
-        <!-- <button class="clear-btn" onclick="replaceButtons('cannabis_seeds')">Edit</button> -->
-        <button id="toggle-button" class="clear-btn" onclick="toggleEmptyRows()">Toggle No Stock Products</button>
+        <button class="clear-btn" onclick="updateAllStock()">Update All</button>
+        <button class="clear-btn" onclick="replaceButtons('cannabis_seeds')">Edit</button>
+        <button id="toggle-button" class="clear-btn" onclick="toggleEmptyRows()">Toggle Stock</button>
         {% if show_toggle %}
             <a href="{{ url_for('green_house_all' if route == 'ghs/all' else 'green_house') }}" class="clear-btn">{{ 'Table per Type' if route == 'ghs' else 'Single Table' }}</a>
         {% endif %}
+        <button class="clear-btn" onclick="scrollToTop()">Page Up</button>
         <h2>{{ page_header }}</h2>
+        <!-- Filter buttons for seed types -->
+    </div>
+    <div id="filter-buttons">
+        <button class="filter-btn" data-seed-type="all">Show All</button>
+        {% for seed_type in seeds_grouped.keys() %}
+            <button class="filter-btn" data-seed-type="{{ seed_type | lower | replace(' ', '-') }}">{{ seed_type }}</button>
+        {% endfor %}
     </div>
     {% for seed_type, seeds_by_type in seeds_grouped.items() %}
+    <div class="container">
         <h3>{{ seed_type }}</h3>
-        <div class="container">
-            <table id="{{ seed_type }}_inventory">
+        <table id="{{ seed_type | lower | replace(' ', '-') }}_inventory">
                 <thead id="table-header">
                     <tr>
                         <th>Number</th>
@@ -57,7 +66,7 @@
                 <tbody>
                     {% for (location_number, name), seeds in seeds_by_type.items() %}
                         {% set seed_type_class = seed_type | lower | replace(' ', '-') %}
-                        <tr class="{{  seed_type_class  }}">
+                        <tr class="{{ seed_type_class }}">
                             <td data-label="Number">{{ location_number }}</td>
                             <td data-label="Name">{{ name }}</td>
                             {% for pack_size in pack_sizes[seed_type]|sort %}
@@ -67,7 +76,8 @@
                                         <form class="stock_input" action="{{ url_for('update_stock', table='cannabis_seeds', id=seed_found[0]['id']) }}" method="post">
                                             <input type="hidden" name="last_refresh_stock" value="{{ seed_found[0]['stock'] }}">
                                             <input type="hidden" name="manufacturer" value="{{ seed_found[0]['manufacturer'] }}">
-                                            <input type="number" name="submitted_stock" value="{{ seed_found[0]['stock'] }}" min="0">
+                                            <label for="{{ seed_found[0]['name'] + '-' + (seed_found[0]['pack_size']|string) + 'pack' }}" class="visually-hidden">{{ seed_found[0]['name'] + '-' + (seed_found[0]['pack_size']|string) + 'pack' }}</label>
+                                            <input id="{{ seed_found[0]['name'] + '-' + (seed_found[0]['pack_size']|string) + 'pack' }}" type="number" name="submitted_stock" value="{{ seed_found[0]['stock'] }}" min="0">
                                             <input type="submit" value="Update" tabindex="-1">
                                         </form>
                                     </td>

@@ -11,7 +11,12 @@
         <div>
             <label for="{{ field }}">{{ field.capitalize() }}:</label>
             <input type="text" id="{{ field }}" name="{{ field }}" required>
-
+            <span>Existing values:</span>
+            <ul style="display: inline; list-style: none; padding: 0; margin: 0;">
+                {% for value in unique_values[field] %}
+                <li style="display: inline; margin-right: 5px;">{{ value }}</li>
+                {% endfor %}
+            </ul>
         </div>
         {% endfor %}
         <input type="submit" value="Add Product">

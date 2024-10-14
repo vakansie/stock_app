@@ -1,16 +1,27 @@
-window.addEventListener('load', initialize);
+document.addEventListener("DOMContentLoaded", function() {
+    var currentPage = window.location.href;
 
-function getColumnIndex(table, headerName) {
-    var headers = table.querySelectorAll('th');
-    for (var i = 0; i < headers.length; i++) {
-        if (headers[i].textContent.trim() === headerName) {
-            return i;
+    // Check if the page is different from the previously stored page
+    var storedPage = localStorage.getItem('currentPage');
+    if (storedPage !== currentPage) {
+        // Clear localStorage items if the page is different
+        localStorage.removeItem('scrollPosition');
+        localStorage.removeItem('searchInputValue');
+        showAllTables();
+    }
+    else {
+        // Restore the filter state from sessionStorage
+        restoreFilterState();
+        if (localStorage.getItem('searchInputValue') !== null) {
+            var searchInput = document.getElementById('searchInput');
+            searchInput.value = localStorage.getItem('searchInputValue');
+            searchTable(); // Make sure search is applied before further actions
         }
     }
-    return -1;
-}
 
-document.addEventListener("DOMContentLoaded", function() {
+    // Update the stored page to the current page
+    localStorage.setItem('currentPage', currentPage);
+
     if (sessionStorage.getItem("toggled") === null) {
         sessionStorage.setItem("toggled", "false");
     }
@@ -48,12 +59,89 @@ document.addEventListener("DOMContentLoaded", function() {
         toggleButton.addEventListener('click', handleToggleClick);
     }
 
-    // Initial update for sticky header
-    updateTableHeaderTop();
-
+    
     // Update on window resize
     window.addEventListener('resize', updateTableHeaderTop);
+    
+    // Store scroll position before form submission
+    var stockForms = document.querySelectorAll('form.stock_input');
+    stockForms.forEach(function(form) {
+        form.addEventListener('submit', function() {
+            localStorage.setItem('scrollPosition', window.scrollY);
+        });
+    });
+    
+    // Restore scroll position
+    if (localStorage.getItem('scrollPosition') !== null) {
+        window.scrollTo(0, localStorage.getItem('scrollPosition'));
+        // localStorage.removeItem('scrollPosition'); // Optional: remove after use if desired
+    }
+    
+    // Restore search input value and perform search
+    if (localStorage.getItem('searchInputValue') !== null) {
+        var searchInput = document.getElementById('searchInput');
+        searchInput.value = localStorage.getItem('searchInputValue');
+        searchTable();
+        // localStorage.removeItem('searchInputValue'); // Optional: remove after use if desired
+    }
+    
+    // Add event listener to search input
+    var searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            localStorage.setItem('searchInputValue', searchInput.value);
+            searchTable();
+        });
+    }
+    
+    // Add event listeners for filter buttons
+    document.querySelectorAll('.filter-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const seedType = this.getAttribute('data-seed-type');
+            if (seedType === 'all') {
+                showAllTables();
+            } else {
+                filterTables(seedType);
+            }
+            storeFilterState();
+        });
+    });
+    // Initial update for sticky header
+    initialize();
+    updateTableHeaderTop();
 });
+
+function storeFilterState() {
+    const hiddenTables = [];
+    const containers = document.querySelectorAll('div.container');
+    containers.forEach(container => {
+        const table = container.querySelector('table');
+        if (table.style.display === "none") {
+            hiddenTables.push(table.id);
+        }
+    });
+    sessionStorage.setItem('hiddenTables', JSON.stringify(hiddenTables));
+}
+
+function restoreFilterState() {
+    const hiddenTables = JSON.parse(sessionStorage.getItem('hiddenTables')) || [];
+    const containers = document.querySelectorAll('div.container');
+    containers.forEach(container => {
+        const table = container.querySelector('table');
+        const previousElement = container.querySelector('h2, h3');
+        if (hiddenTables.includes(table.id)) {
+            container.style.display = "none";
+            if (previousElement) {
+                previousElement.style.display = "none";
+            }
+        } else {
+            container.style.display = "block";
+            if (previousElement) {
+                previousElement.style.display = "block";
+            }
+        }
+    });
+}
 
 function handleToggleClick() {
     var toggled = sessionStorage.getItem("toggled") === "true";
@@ -240,10 +328,13 @@ function searchTable() {
         }
         table.style.display = hasVisibleRow ? "" : "none";
     }
+    // localStorage.removeItem('scrollPosition');
 }
 
 function clearSearch() {
     document.getElementById('searchInput').value = '';
+    localStorage.removeItem('searchInputValue');
+    localStorage.removeItem('scrollPosition');
     searchTable();
 }
 
@@ -279,4 +370,51 @@ function updateTableHeaderTop() {
             headerCells[i].style.top = searchContainerHeight + 'px';
         }
     }
+}
+
+// New functions to show all tables or filter by seed type
+function showAllTables() {
+    const containers = document.querySelectorAll('div.container');
+    containers.forEach(container => {
+        container.style.display = "block";
+        const table = container.querySelector('table');
+        const previousElement = container.querySelector('h2, h3');
+        if (table) {
+            table.style.display = "table";
+        }
+        if (previousElement) {
+            previousElement.style.display = "block";
+        }
+    });
+}
+
+function filterTables(seedTypeClass) {
+    const containers = document.querySelectorAll('div.container');
+    containers.forEach(container => {
+        const table = container.querySelector('table');
+        const previousElement = container.querySelector('h2, h3');
+        if (table && table.id === seedTypeClass + '_inventory') {
+            container.style.display = "block";
+            if (table) {
+                table.style.display = "table";
+            }
+            if (previousElement) {
+                previousElement.style.display = "block";
+            }
+        } else {
+            container.style.display = "none";
+            if (table) {
+                table.style.display = "none";
+            }
+            if (previousElement) {
+                previousElement.style.display = "none";
+            }
+        }
+    });
+}
+
+function scrollToTop() {
+    // For better compatibility
+    document.documentElement.scrollTop = 0; // For older versions of Firefox
+    document.body.scrollTop = 0; // For older versions of Android and other browsers
 }

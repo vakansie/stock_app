@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="static/styles.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Stock Changes Log">
+        <title>Stock Changes Log</title>
+        <style>
+            /* :root {
+            --bg: #1b1b1b;
+            --text: #c8c8c8;
+            } */
+        </style>
+        <script src="static/stock_app.js" defer></script>
+    </head>
+    <body>
+        <div class="nav-menu">
+            <a href="{{ url_for('fastbuds') }}" class="{% if route == 'fastbuds' %}active{% endif %}">Fastbuds</a>
+            <a href="{{ url_for('green_house') }}" class="{% if route in ('ghs', 'ghs/all') %}active{% endif %}">Green House Seeds</a>
+            <a href="{{ url_for('barney') }}" class="{% if route == 'barney' %}active{% endif %}">Barneys Farm</a>
+            <a href="{{ url_for('dutch_passion') }}" class="{% if route == 'dutch_passion' %}active{% endif %}">Dutch Passion</a>
+            <a href="{{ url_for('rqs') }}" class="{% if route == 'rqs' %}active{% endif %}">Royal Queen Seeds</a>
+            <a href="{{ url_for('all_seeds') }}" class="{% if route == 'all_seeds' %}active{% endif %}">All Seeds Inventory</a>
+            <a href="{{ url_for('inventory') }}" class="{% if route == '' %}active{% endif %}">Grow Kit Stock List</a>
+            <a href="{{ url_for('show_log') }}" class="active">Log</a>
+            <button id="toggle-theme">Toggle Theme</button>
+        </div>
+        <h1>Stock Changes Log</h1>
+        <pre>{{ log_content }}</pre>
+    </body>
+</html>
